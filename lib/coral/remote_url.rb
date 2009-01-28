@@ -2,12 +2,20 @@ require 'uri'
 
 module Coral
   class RemoteUrl
-    attr_reader :host, :path
+    attr_reader :host, :path, :project, :fork
     
     def initialize(domain, path)
       @host = domain
       @path = path
       @dir  = nil
+      
+      case host
+      when 'github.com'
+        @project, @fork = clean_path.split('/').reverse
+        "#{project}/#{fork}"
+      else
+        raise "I don't know how to organize repos from #{host}"
+      end
     end
     
     def clean_path
@@ -15,12 +23,7 @@ module Coral
     end
     
     def coral_path
-      case host
-      when 'github.com'
-        clean_path.split('/').reverse.join('/')
-      else
-        raise "I don't know how to organize repos from #{host}"
-      end
+      "#{project}/#{fork}"
     end
     
     def coral_dir

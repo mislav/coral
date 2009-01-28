@@ -18,6 +18,8 @@ module Coral
     def clone(url)
       remote = RemoteUrl::parse(url)
       cmd %(git clone #{url} #{remote.coral_dir.inspect})
+      
+      add_remote(remote) if command_was_success?
     end
     
     desc "update <repo-name>", "update a repo by pulling from upstream"
@@ -54,6 +56,8 @@ module Coral
       # move the repo to the new location
       FileUtils.mkdir_p(File.dirname(target), fileutils_options)
       FileUtils.mv(source, target, fileutils_options)
+      
+      add_remote(remote)
     end
     
     def reindex
@@ -72,9 +76,21 @@ module Coral
           `#{command}`
         end
       end
+      
+      def command_was_success?
+        $?.success?
+      end
+      
+      def add_remote(remote)
+        Coral.index.add remote unless options.noop?
+      end
+      
+      def verbose?
+        options.verbose?
+      end
     
       def fileutils_options
-        { :noop => options.noop?, :verbose => options.verbose? }
+        { :noop => options.noop?, :verbose => verbose? }
       end
     
   end

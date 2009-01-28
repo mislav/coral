@@ -19,6 +19,11 @@ module Coral
       key?(repo_name) and "#{repo_name}/#{self[repo_name].first}"
     end
     
+    def add(remote)
+      (self[remote.project] ||= []) << remote.fork
+      dump!
+    end
+    
     def dump!
       File.open(file, 'w') do |index_file|
         index_file << YAML::dump(self.to_hash)
