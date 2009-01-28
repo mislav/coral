@@ -1,0 +1,35 @@
+= Coral distribution system
+
+<i>A work in progress</i>
+
+Coral aims to complement and -- to some extent -- replace RubyGems by pulling in and organizing git repositories.
+
+
+== Usage
+
+Fetching a project:
+
+  $ coral clone git://github.com/wycats/thor.git
+
+In your code:
+
+  require 'coral'
+  require 'thor'
+
+
+== Why git instead of neatly packaged gems?
+
+* with gems you have to wait for a release;
+* you can't fork a gem, contribute and push;
+* publishing gems always felt dirty, admit it;
+* with git you can ride an experimental branch of your favorite project;
+* with git you have history.
+
+Coral will help you maintain submodules.
+
+Coral will help you deploy.
+
+
+== Did git ever get you laid?
+
+No, and -- like you -- I keep wondering {why is that}[http://twitter.com/chacon/statuses/1013941316].
