@@ -57,17 +57,8 @@ module Coral
     end
     
     def reindex
-      Dir.chdir LocalReef do
-        index = Dir["*/*"].inject({}) do |all, dir|
-          repo, branch = dir.split("/", 2)
-          (all[repo] ||= []) << branch
-          all
-        end
-        File.open(LocalIndex, 'w') do |file|
-          file << YAML::dump(index)
-        end
-        puts "Coral index written to #{LocalIndex.inspect}"
-      end
+      Coral.index.reindex!
+      puts "Coral index written to #{Coral.index.file.inspect}"
     end
     
     private
