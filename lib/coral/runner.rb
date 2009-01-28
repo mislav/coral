@@ -1,5 +1,3 @@
-require 'rubygems'
-gem 'mislav-thor', '~> 0.9.10'
 require 'thor'
 require 'fileutils'
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
 $:.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'coral'
+require 'rubygems'
+gem 'mislav-thor', '~> 0.9.10'
+
 Coral::Runner.start
