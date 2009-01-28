@@ -9,7 +9,7 @@ module Coral
     desc "list", "list projects organized by Coral"
     
     def list
-      puts Coral.repos.join(", ")
+      puts Coral.repos.sort.join(", ")
     end
     
     desc "clone <repo-url>", "clone a repo into a local coral reef (#{LocalReef})"
