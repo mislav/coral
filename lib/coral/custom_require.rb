@@ -11,8 +11,8 @@ module Kernel
     end
   rescue LoadError => load_error
     if load_error.message =~ /\A[Nn]o such file to load -- #{Regexp.escape path}\z/ and
-        lib_dir = Coral.find(path)
-      Coral.activate(lib_dir)
+        coral_dir = Coral.find(path)
+      Coral.activate(coral_dir)
       # library added to load paths; now retry require
       if defined? ::Gem
         gem_original_require(path)

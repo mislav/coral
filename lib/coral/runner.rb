@@ -24,12 +24,11 @@ module Coral
     method_options :noop => :boolean, :verbose => true
     
     def update(repo)
-      unless lib_dir = Coral.find(repo)
+      unless dir = Coral.find(repo)
         abort "Failed:  couldn't find #{repo.inspect} in Coral"
       end
-      working_dir = File.dirname(lib_dir)
       
-      Dir.chdir working_dir do
+      Dir.chdir "#{LocalReef}/#{dir}" do
         cmd %(git pull)
       end
     end
@@ -55,6 +54,20 @@ module Coral
       # move the repo to the new location
       FileUtils.mkdir_p(File.dirname(target), fileutils_options)
       FileUtils.mv(source, target, fileutils_options)
+    end
+    
+    def reindex
+      Dir.chdir LocalReef do
+        index = Dir["*/*"].inject({}) do |all, dir|
+          repo, branch = dir.split("/", 2)
+          (all[repo] ||= []) << branch
+          all
+        end
+        File.open(LocalIndex, 'w') do |file|
+          file << YAML::dump(index)
+        end
+        puts "Coral index written to #{LocalIndex.inspect}"
+      end
     end
     
     private
