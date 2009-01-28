@@ -1,12 +1,22 @@
 require 'rubygems'
+gem 'mislav-thor', '~> 0.9.10'
 require 'thor'
 require 'fileutils'
 
 module Coral
   class Runner < Thor
     
+    desc "clone <repo-url>", "clone a repo into a local coral reef (#{LocalReef})"
+    method_options :noop => :boolean, :verbose => true
+    
+    def clone(url)
+      remote = RemoteUrl::parse(url)
+      cmd %(git clone #{url} #{remote.coral_dir.inspect})
+    end
+    
     desc "move <repo-dir>", "move an existing repo to a local coral reef (#{LocalReef})"
     method_options :noop => :boolean, :verbose => :boolean
+    
     def move(repo)
       source = File.expand_path(repo)
       source_config = "#{source}/.git/config"
@@ -28,6 +38,16 @@ module Coral
     end
     
     private
+    
+      def cmd(command)
+        if options.noop?
+          puts command
+        elsif options.verbose?
+          system command
+        else
+          `#{command}`
+        end
+      end
     
       def fileutils_options
         { :noop => options.noop?, :verbose => options.verbose? }
