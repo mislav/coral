@@ -6,12 +6,32 @@ require 'fileutils'
 module Coral
   class Runner < Thor
     
+    desc "list", "list projects organized by Coral"
+    
+    def list
+      puts Coral.repos.join(", ")
+    end
+    
     desc "clone <repo-url>", "clone a repo into a local coral reef (#{LocalReef})"
     method_options :noop => :boolean, :verbose => true
     
     def clone(url)
       remote = RemoteUrl::parse(url)
       cmd %(git clone #{url} #{remote.coral_dir.inspect})
+    end
+    
+    desc "update <repo-name>", "update a repo by pulling from upstream"
+    method_options :noop => :boolean, :verbose => true
+    
+    def update(repo)
+      unless lib_dir = Coral.find(repo)
+        abort "Failed:  couldn't find #{repo.inspect} in Coral"
+      end
+      working_dir = File.dirname(lib_dir)
+      
+      Dir.chdir working_dir do
+        cmd %(git pull)
+      end
     end
     
     desc "move <repo-dir>", "move an existing repo to a local coral reef (#{LocalReef})"
