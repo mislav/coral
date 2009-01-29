@@ -13,9 +13,10 @@ module Coral
     desc "clone <repo-url>", "clone a repo into a local coral reef (#{LocalReef})"
     method_options :noop => :boolean, :verbose => true
     
-    def clone(url)
-      remote = RemoteUrl::parse(url)
-      cmd %(git clone #{url} #{remote.coral_dir.inspect})
+    def clone(url, name = nil)
+      polyp = name ? Polyp::parse(name) : Polyp::parse_uri(url)
+      coral_path = Coral.index.coral_path(polyp)
+      cmd %(git clone #{url} #{coral_path.inspect})
       
       add_remote(remote) if command_was_success?
     end
@@ -36,7 +37,7 @@ module Coral
     desc "move <repo-dir>", "move an existing repo to a local coral reef (#{LocalReef})"
     method_options :noop => :boolean, :verbose => :boolean
     
-    def move(repo)
+    def move(repo, name = nil)
       source = File.expand_path(repo)
       source_config = "#{source}/.git/config"
       
@@ -45,8 +46,8 @@ module Coral
       end
       # get the URL of the remote named "origin"
       url = `git config --file #{source_config.inspect} remote.origin.url`.chomp
-      remote = RemoteUrl::parse(url)
-      target = remote.coral_dir
+      polyp = name ? Polyp::parse(name) : Polyp::parse_uri(url)
+      target = Coral.index.coral_path(polyp)
       
       if File.exists? target
         abort "Aborted:  target #{target.inspect} already exists"
@@ -55,7 +56,7 @@ module Coral
       FileUtils.mkdir_p(File.dirname(target), fileutils_options)
       FileUtils.mv(source, target, fileutils_options)
       
-      add_remote(remote)
+      add_remote(polyp)
     end
     
     def reindex

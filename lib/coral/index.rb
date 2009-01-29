@@ -45,5 +45,9 @@ module Coral
       reindex
       dump!
     end
+    
+    def coral_path(polyp)
+      "#{reef}/#{polyp.project}/#{polyp.fork}"
+    end
   end
 end

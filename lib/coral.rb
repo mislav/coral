@@ -3,9 +3,9 @@ require 'yaml'
 module Coral
   LocalReef = "#{ENV['HOME']}/.coral"
   
-  autoload :Runner,    'coral/runner'
-  autoload :RemoteUrl, 'coral/remote_url'
-  autoload :Index,     'coral/index'
+  autoload :Runner, 'coral/runner'
+  autoload :Polyp,  'coral/polyp'
+  autoload :Index,  'coral/index'
   
   def self.repos
     index.keys
