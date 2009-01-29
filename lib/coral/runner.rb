@@ -57,6 +57,7 @@ module Coral
       FileUtils.mv(source, target, fileutils_options)
       
       add_remote(polyp)
+      puts "Repo #{source.inspect} joined the coral colony at #{target.inspect}"
     end
     
     def reindex
