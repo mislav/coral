@@ -18,7 +18,7 @@ module Coral
       coral_path = Coral.index.coral_path(polyp)
       cmd %(git clone #{url} #{coral_path.inspect})
       
-      add_remote(remote) if command_was_success?
+      add_remote(polyp) if command_was_success?
     end
     
     desc "update <repo-name>", "update a repo by pulling from upstream"
