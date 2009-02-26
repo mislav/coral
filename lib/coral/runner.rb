@@ -34,6 +34,16 @@ module Coral
       end
     end
     
+    desc "path <repo-name>", "echo the absolute path of a library"
+    
+    def path(repo)
+      unless dir = Coral.find(repo)
+        abort "Failed:  couldn't find #{repo.inspect} in Coral"
+      end
+      
+      puts "#{LocalReef}/#{dir}"
+    end
+    
     desc "move <repo-dir>", "move an existing repo to a local coral reef (#{LocalReef})"
     method_options :noop => :boolean, :verbose => :boolean
     
