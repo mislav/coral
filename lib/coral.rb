@@ -33,3 +33,9 @@ end
 unless 'coral' == File.basename($0)
   require 'coral/custom_require'
 end
+
+ENV['CORAL'].split(',').each do |lib|
+  repo = Coral.find(lib)
+  raise LoadError, "can't find #{lib.inspect} with Coral" unless repo
+  Coral.activate(repo)
+end if ENV['CORAL']
