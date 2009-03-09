@@ -70,6 +70,7 @@ module Coral
       puts "Repo #{source.inspect} joined the coral colony at #{target.inspect}"
     end
     
+    desc "reindex", "scan the Coral reef and re-write the index file"
     def reindex
       Coral.index.reindex!
       puts "Coral index written to #{Coral.index.file.inspect}"
