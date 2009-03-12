@@ -34,6 +34,29 @@ module Coral
       end
     end
     
+    desc "fork <repo> <fork-name>", "fork a repository by checking out a new working copy"
+    method_options :noop => :boolean, :verbose => :boolean
+    
+    def fork(repo, name)
+      source = Coral.find(repo).split('/').last
+      targets = %w(config refs logs/refs objects info hooks packed-refs remotes rr-cache svn)
+      
+      Dir.chdir "#{LocalReef}/#{repo}" do
+        target_git = "#{name}/.git"
+        FileUtils.mkdir_p(target_git, fileutils_options)
+        source_git = "#{source}/.git"
+        
+        for target in targets
+          target_path = "#{target_git}/#{target}"
+          ups = target_path.split('/').size - 1
+          FileUtils.mkdir_p(File.dirname(target_path), fileutils_options) if ups > 2
+          FileUtils.ln_s("#{'../' * ups}#{source_git}/#{target}", target_path, fileutils_options)
+        end
+        
+        FileUtils.cp("#{source_git}/HEAD", "#{target_git}/HEAD", fileutils_options)
+      end
+    end
+    
     desc "path <repo-name>", "echo the absolute path of a library"
     
     def path(repo)
@@ -101,7 +124,7 @@ module Coral
       end
     
       def fileutils_options
-        { :noop => options.noop?, :verbose => verbose? }
+        @fileutils_options ||= { :noop => options.noop?, :verbose => verbose? }
       end
     
   end
