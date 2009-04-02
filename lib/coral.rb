@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Coral
-  LocalReef = "#{ENV['HOME']}/.coral"
+  LocalReef = (ENV['CORAL_REEF'] || "#{ENV['HOME']}/.coral")
   
   autoload :Runner, 'coral/runner'
   autoload :Polyp,  'coral/polyp'
