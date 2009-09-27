@@ -21,16 +21,18 @@ module Coral
       add_remote(polyp) if command_was_success?
     end
     
-    desc "update <repo-name>", "update a repo by pulling from upstream"
+    desc "update <repo-name> [<repo2-name> ...]", "update a repo by pulling from upstream"
     method_options :noop => :boolean, :verbose => true
     
-    def update(repo)
-      unless dir = Coral.find(repo)
-        abort "Failed:  couldn't find #{repo.inspect} in Coral"
-      end
+    def update(*repos)
+      for repo in repos
+        unless dir = Coral.find(repo)
+          abort "Failed:  couldn't find #{repo.inspect} in Coral"
+        end
       
-      Dir.chdir "#{LocalReef}/#{dir}" do
-        cmd %(git pull)
+        Dir.chdir "#{LocalReef}/#{dir}" do
+          cmd %(git pull)
+        end
       end
     end
     
