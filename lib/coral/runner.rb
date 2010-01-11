@@ -67,6 +67,21 @@ module Coral
       FileUtils.cp(source_git + 'HEAD', target_git + 'HEAD', fileutils_options)
       puts target_git.dirname
       index_add(new_repo)
+      
+      Dir.chdir target_git.dirname do
+        if cmd %(git rev-parse #{new_version} 2>&1)
+          # checkout tag or branch
+          cmd %(git checkout -q #{new_version})
+        elsif cmd %(git rev-parse origin/#{new_version} 2>&1)
+          # checkout a new branch to track a remote branch
+          cmd %(git checkout --track origin/#{new_version})
+        elsif `git remote`.split("\n").include? new_version
+          # checkout a new branch to track a fork
+          cmd %(git checkout --track -b #{new_version} #{new_version}/master)
+        else
+          cmd %(git checkout HEAD)
+        end
+      end
     end
     
     desc "path <repo-name>", "echo the absolute path of a library"
