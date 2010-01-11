@@ -84,6 +84,20 @@ module Coral
       end
     end
     
+    desc "remove <repo> <version>", "delete a working copy from filesystem"
+    method_options :noop => :boolean, :verbose => :boolean
+    def remove(name, version)
+      unless repo = Coral.find(name, version)
+        abort "Error: couldn't find #{name} in Coral"
+      end
+      if Coral::index[repo.name].first == repo.version
+        abort %("Cannot remove: #{repo.name}-#{repo.version}" is the main version)
+      end
+      if FileUtils.rm_rf(LocalReef + repo.path, fileutils_options)
+        index_remove(repo)
+      end
+    end
+    
     desc "path <repo-name>", "echo the absolute path of a library"
     method_options [:version, '-v'] => :string
     def path(name)
@@ -133,6 +147,10 @@ module Coral
       
       def index_add(repo)
         Coral.index.add!(repo) unless options.noop?
+      end
+      
+      def index_remove(repo)
+        Coral.index.remove!(repo) unless options.noop?
       end
       
       def fileutils_options

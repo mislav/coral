@@ -31,6 +31,11 @@ module Coral
       dump!
     end
     
+    def remove!(repo)
+      self[repo.name].delete(repo.version)
+      dump!
+    end
+    
     def dump!
       File.open(file, 'w') do |index_file|
         index_file << YAML::dump(self.to_hash)
