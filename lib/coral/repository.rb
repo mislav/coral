@@ -1,3 +1,7 @@
+require 'yaml'
+require 'net/http'
+require 'cgi'
+
 module Coral
   class Repository
     FORMAT = %r{
@@ -30,18 +34,44 @@ module Coral
     def clone_url
       @clone_url || "git://github.com/#{@version}/#{@name}.git"
     end
+    
+    def guess_version_from_github
+      results = self.class.search_github(name)
+      unless results.empty?
+        @name = results.first["name"]
+        @version = results.first["username"]
+      end
+    end
+    
+    private
+    
+    def self.search_github(term)
+      url = URI('http://github.com/api/v2/yaml/repos/search/' + CGI::escape(term))
+      response = Net::HTTP.get_response(url)
+      YAML.load(response.body)["repositories"]
+    end
   end
 end
 
 if $0 == __FILE__
   require 'spec/autorun'
+  require 'fakeweb'
+  FakeWeb.allow_net_connect = false
+  
+  FakeWeb.register_uri(:get, 'http://github.com/api/v2/yaml/repos/search/will_paginate', :body => YAML.dump(
+    "repositories" => [{"name" => "will_paginate", "username" => "mislav"}]
+  ))
   
   describe Coral::Repository do
     context "just name" do
-      subject { described_class.parse('will_paginate') }
-      its(:path) { should == 'will_paginate-' }
-      it "should search github to find out the username"
-      it "should get clone url from github search"
+      subject {
+        repo = described_class.parse('will_paginate')
+        repo.guess_version_from_github
+        repo
+      }
+      its(:path) { should == 'will_paginate-mislav' }
+      its(:version) { should == 'mislav' }
+      its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
     end
     
     context "name and username" do

@@ -20,6 +20,10 @@ module Coral
     method_options :noop => :boolean, :verbose => :boolean
     def clone(name)
       repo = Repository::parse(name)
+      if repo.version.nil?
+        repo.guess_version_from_github
+        abort %(Error: don't know how to clone "#{repo.name}") if repo.version.nil?
+      end
       FileUtils.mkdir_p(LocalReef, fileutils_options)
       target_path = LocalReef + repo.path
       
