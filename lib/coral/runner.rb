@@ -37,7 +37,7 @@ module Coral
     def update(*names)
       for name in names
         if repo = Coral.find(name, options.version)
-          Dir.chdir(LocalReef + repo.path) do
+          chdir(LocalReef + repo.path) do
             puts "(in #{Dir.pwd})" if options.verbose?
             cmd %(git pull)
           end
@@ -72,7 +72,7 @@ module Coral
       puts target_git.dirname
       index_add(new_repo)
       
-      Dir.chdir target_git.dirname do
+      chdir target_git.dirname do
         if cmd %(git rev-parse #{new_version} 2>&1)
           # checkout tag or branch
           cmd %(git checkout -q #{new_version})
@@ -159,6 +159,15 @@ module Coral
       
       def fileutils_options
         @fileutils_options ||= { :noop => options.noop?, :verbose => options.verbose? }
+      end
+      
+      def chdir(dir, &block)
+        puts "(in #{dir})" if options.verbose?
+        if options.noop?
+          yield if block_given?
+        else
+          Dir.chdir(dir, &block)
+        end
       end
     
   end
