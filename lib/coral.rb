@@ -1,32 +1,32 @@
-require 'yaml'
+require 'pathname'
 
 module Coral
-  LocalReef = (ENV['CORAL_REEF'] || "#{ENV['HOME']}/.coral")
+  # a coral reef is a place where repositories are kept
+  LocalReef = Pathname.new(ENV['CORALREEF'] || "#{ENV['HOME']}/.coral").expand_path
   
   autoload :Runner, 'coral/runner'
-  autoload :Polyp,  'coral/polyp'
-  autoload :Index,  'coral/index'
-  
-  def self.repos
-    index.keys
-  end
+  autoload :Repository, 'coral/repository'
+  autoload :Index, 'coral/index'
   
   def self.index
     @index ||= Index.new LocalReef
   end
   
-  def self.find(repo_name)
-    index.find_repo(repo_name)
+  def self.find(name, version = nil)
+    index.find_repo(name, version)
   end
   
-  def self.activate(coral_dir)
-    coral_dir = "#{LocalReef}/#{coral_dir}" unless coral_dir.index('/') == 0
-    coral_dir += '/lib' unless coral_dir =~ %r{/lib$}
+  class LoadError < ::LoadError
+  end
+  
+  def self.activate(repo)
+    repo = find(repo) if String === repo
+    libdir = LocalReef + repo.path + 'lib'
     
-    unless File.exists? coral_dir
-      raise "Directory #{coral_dir.inspect} indexed by Coral is missing"
+    unless libdir.exist?
+      raise Coral::LoadError, "Directory #{libdir.to_s.inspect} not found"
     end
-    $LOAD_PATH.unshift coral_dir
+    $LOAD_PATH.unshift libdir.to_s
   end
 end
 
@@ -34,8 +34,4 @@ unless 'coral' == File.basename($0)
   require 'coral/custom_require'
 end
 
-ENV['CORAL'].split(',').each do |lib|
-  repo = Coral.find(lib)
-  raise LoadError, "can't find #{lib.inspect} with Coral" unless repo
-  Coral.activate(repo)
-end if ENV['CORAL']
+ENV['CORAL'].split(',').each { |name| Coral.activate(name) } if ENV['CORAL']

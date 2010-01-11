@@ -1,11 +1,11 @@
+require 'yaml'
+
 module Coral
   class Index < ::Hash
-    attr_reader :reef, :file
+    attr_reader :file
     
     def initialize(local_reef)
-      @reef = local_reef
-      @file = "#{reef}/index.yml"
-      
+      @file = local_reef + 'index.yml'
       if File.exists?(file)
         self.replace YAML::load(File.open(file))
       end
@@ -15,12 +15,19 @@ module Coral
       {}.update(self)
     end
     
-    def find_repo(repo_name)
-      key?(repo_name) and "#{repo_name}/#{self[repo_name].first}"
+    def find_repo(name, version = nil)
+      if versions = self[name]
+        if version
+          return nil unless versions.include? version
+        else
+          version = versions.first
+        end
+        Repository.new(name, version)
+      end
     end
     
-    def add(remote)
-      (self[remote.project] ||= []) << remote.fork
+    def add!(repo)
+      (self[repo.name] ||= []) << repo.version
       dump!
     end
     
@@ -28,26 +35,6 @@ module Coral
       File.open(file, 'w') do |index_file|
         index_file << YAML::dump(self.to_hash)
       end
-    end
-    
-    def reindex
-      Dir.chdir reef do
-        index = Dir["*/*"].inject({}) do |all, dir|
-          repo, branch = dir.split("/", 2)
-          (all[repo] ||= []) << branch
-          all
-        end
-        self.replace index
-      end
-    end
-    
-    def reindex!
-      reindex
-      dump!
-    end
-    
-    def coral_path(polyp)
-      "#{reef}/#{polyp.project}/#{polyp.fork}"
     end
   end
 end
