@@ -16,6 +16,15 @@ module Coral
     index.find_repo(name, version)
   end
   
+  def self.list(pattern)
+    keys = Coral.index.keys
+    keys = keys.grep(/^#{pattern}/) if pattern
+    
+    for name in keys.sort
+      yield name, Coral.index[name]
+    end
+  end
+  
   class LoadError < ::LoadError
   end
   
@@ -23,7 +32,7 @@ module Coral
     repo = find(repo) if String === repo
     libdir = LocalReef + repo.path + 'lib'
     
-    unless libdir.exist?
+    unless libdir.directory?
       raise Coral::LoadError, "Directory #{libdir.to_s.inspect} not found"
     end
     $LOAD_PATH.unshift libdir.to_s
@@ -34,4 +43,6 @@ unless 'coral' == File.basename($0)
   require 'coral/custom_require'
 end
 
-ENV['CORAL'].split(',').each { |name| Coral.activate(name) } if ENV['CORAL']
+if ENV['CORAL']
+  ENV['CORAL'].split(',').each { |name| Coral.activate(name) }
+end

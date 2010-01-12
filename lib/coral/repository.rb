@@ -27,12 +27,28 @@ module Coral
       @name, @version = name, version
     end
     
-    def path
+    def to_s
+      "#{@name}@#{@version}"
+    end
+    
+    def directory
       "#{@name}-#{@version}"
+    end
+    
+    def path
+      @path ||= LocalReef + directory
+    end
+    
+    def git_path
+      @git_path ||= path + '.git'
     end
     
     def clone_url
       @clone_url || "git://github.com/#{@version}/#{@name}.git"
+    end
+    
+    def main?
+      Coral.index[self.name].first == self.version
     end
     
     def guess_version_from_github
@@ -69,28 +85,28 @@ if $0 == __FILE__
         repo.guess_version_from_github
         repo
       }
-      its(:path) { should == 'will_paginate-mislav' }
+      its(:directory) { should == 'will_paginate-mislav' }
       its(:version) { should == 'mislav' }
       its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
     end
     
     context "name and username" do
       subject { described_class.parse('mislav/will_paginate') }
-      its(:path) { should == 'will_paginate-mislav' }
+      its(:directory) { should == 'will_paginate-mislav' }
       its(:version) { should == 'mislav' }
       its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
     end
     
     context "public github url" do
       subject { described_class.parse('git://github.com/mislav/will_paginate.git') }
-      its(:path) { should == 'will_paginate-mislav' }
+      its(:directory) { should == 'will_paginate-mislav' }
       its(:version) { should == 'mislav' }
       its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
     end
     
     context "private github url" do
       subject { described_class.parse('git@github.com:mislav/will_paginate.git') }
-      its(:path) { should == 'will_paginate-mislav' }
+      its(:directory) { should == 'will_paginate-mislav' }
       its(:version) { should == 'mislav' }
       its(:clone_url) { should == 'git@github.com:mislav/will_paginate.git' }
     end
