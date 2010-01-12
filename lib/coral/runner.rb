@@ -20,7 +20,7 @@ module Coral
       repo = Repository.parse(name)
       if repo.version.nil?
         repo.guess_version_from_github
-        abort %(Error: don't know how to clone "#{repo.name}") if repo.version.nil?
+        error %(don't know how to clone "#{repo.name}") if repo.version.nil?
       end
       FileUtils.mkdir_p(LocalReef, fileutils_options)
       
@@ -37,7 +37,7 @@ module Coral
             cmd %(git pull)
           end
         else
-          abort %(Error: couldn't find "#{name}")
+          error %(couldn't find "#{name}")
         end
       end
     end
@@ -47,7 +47,7 @@ module Coral
     def checkout(name, new_version)
       repo = Coral.find(name)
       if existing = Coral.find(repo.name, new_version)
-        abort %(Error: "#{existing}" already exists)
+        error %("#{existing}" already exists)
       end
       new_repo = Repository.new(repo.name, new_version)
       links = %w(config refs logs/refs objects info hooks packed-refs remotes rr-cache svn)
@@ -82,8 +82,8 @@ module Coral
     desc "remove <name>", "delete a working copy from filesystem"
     def remove(name)
       repo = Coral.find(name)
-      abort %(Error: couldn't find "#{name}" in Coral) unless repo
-      abort %(Cannot remove: "#{repo}" is the main version) if repo.main?
+      error %(couldn't find "#{name}" in Coral) unless repo
+      error %(cannot remove "#{repo}", it's the main version) if repo.main?
       if FileUtils.rm_rf(repo.path, fileutils_options)
         index_remove(repo)
       end
@@ -92,7 +92,7 @@ module Coral
     desc "path <name>", "echo the absolute path of a library"
     def path(name)
       repo = Coral.find(name)
-      abort "Error: couldn't find #{name} in Coral" unless repo
+      error "couldn't find #{name} in Coral" unless repo
       say repo.path
     end
     
@@ -101,13 +101,13 @@ module Coral
       source = Pathname.new(dir).expand_path
       source_config = source + '.git/config'
       unless source_config.exist?
-        abort "Error: directory #{source.to_s.inspect} doesn't seem like a git repository"
+        error "directory #{source.to_s.inspect} doesn't seem like a git repository"
       end
       
       # get the URL of the remote named "origin"
       url = `git config --file "#{source_config}" remote.origin.url`.chomp
       repo = Repository.parse(url)
-      abort "Error: target #{repo.path.to_s.inspect} already exists" if repo.path.exist?
+      error "target #{repo.path.to_s.inspect} already exists" if repo.path.exist?
       
       # move the repo to the new location
       FileUtils.mkdir_p(repo.path.dirname, fileutils_options)
@@ -157,6 +157,10 @@ module Coral
         else
           Dir.chdir(dir, &block)
         end
+      end
+      
+      def error(msg)
+        raise Thor::Error, "Error: #{msg}"
       end
     
   end
