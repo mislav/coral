@@ -5,7 +5,7 @@ module Kernel
   def require(path)
     coral_original_require(path)
   rescue LoadError
-    if $!.message =~ /#{Regexp.escape path}\z/ and repo = Coral.find(path)
+    if $!.message =~ /#{Regexp.escape path}\z/ and repo = Coral::index.find_path(path)
       Coral.activate(repo)
       # library added to load paths; now retry require
       coral_original_require(path)
