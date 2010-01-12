@@ -33,10 +33,10 @@ module Coral
     end
     
     desc "update <repo-name> [<repo2-name> ...] [-v VERSION]", "update a repo by pulling from upstream"
-    method_options [:version, '-v'] => :string, :noop => :boolean, :verbose => :boolean
+    method_options :noop => :boolean, :verbose => :boolean
     def update(*names)
       for name in names
-        if repo = Coral.find(name, options.version)
+        if repo = Coral.find(name)
           chdir(LocalReef + repo.path) do
             puts "(in #{Dir.pwd})" if options.verbose?
             cmd %(git pull)
@@ -90,8 +90,8 @@ module Coral
     
     desc "remove <repo> <version>", "delete a working copy from filesystem"
     method_options :noop => :boolean, :verbose => :boolean
-    def remove(name, version)
-      unless repo = Coral.find(name, version)
+    def remove(name)
+      unless repo = Coral.find(name)
         abort "Error: couldn't find #{name} in Coral"
       end
       if Coral::index[repo.name].first == repo.version
@@ -103,9 +103,8 @@ module Coral
     end
     
     desc "path <repo-name>", "echo the absolute path of a library"
-    method_options [:version, '-v'] => :string
     def path(name)
-      unless repo = Coral.find(name, options.version)
+      unless repo = Coral.find(name)
         abort "Error: couldn't find #{name} in Coral"
       end
       puts LocalReef + repo.path

@@ -13,6 +13,8 @@ module Coral
     end
     
     def find_repo(name, version = nil)
+      name, version = name.split('@') if version.nil? and name.index('@')
+      
       if versions = self[name]
         if version
           return nil unless versions.include? version
