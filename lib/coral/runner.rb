@@ -10,7 +10,8 @@ module Coral
     desc "list [<pattern>]", "list projects organized by Coral"
     def list(pattern = nil)
       Coral.list(pattern) do |name, versions|
-        puts "#{name} (#{versions.join(', ')})"
+        versions.unshift shell.set_color(versions.shift, :blue, true)
+        say "#{name} (#{versions.join(', ')})"
       end
     end
     
