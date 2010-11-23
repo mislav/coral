@@ -5,7 +5,7 @@ require 'cgi'
 module Coral
   class Repository
     FORMAT = %r{
-      ^( (?:git|http)(?:://|@)github\.com [/:] )? # github url
+      ^( (?:git|https?)(?:://|@)github\.com [/:] )? # github url
       (?: ([^/]+) /)? # username
       (.+?) # repository name
       (?:\.git|/)?$ # git suffix
@@ -15,7 +15,7 @@ module Coral
       string = string.strip
       if string =~ FORMAT
         repo = new($3, $2)
-        if $1 and (string.index('http:') != 0 or string =~ /\.git$/)
+        if $1 and (string !~ /^https?:/ or string =~ /\.git$/)
           repo.clone_url = string
         end
         repo
@@ -108,6 +108,13 @@ if $0 == __FILE__
     
     context "public github HTTP url" do
       subject { described_class.parse('http://github.com/mislav/will_paginate/') }
+      its(:directory) { should == 'will_paginate-mislav' }
+      its(:version) { should == 'mislav' }
+      its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
+    end
+    
+    context "public github HTTPS url" do
+      subject { described_class.parse('https://github.com/mislav/will_paginate') }
       its(:directory) { should == 'will_paginate-mislav' }
       its(:version) { should == 'mislav' }
       its(:clone_url) { should == 'git://github.com/mislav/will_paginate.git' }
