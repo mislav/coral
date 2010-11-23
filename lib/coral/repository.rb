@@ -72,7 +72,7 @@ module Coral
 end
 
 if $0 == __FILE__
-  require 'spec/autorun'
+  require 'rspec'
   require 'fakeweb'
   FakeWeb.allow_net_connect = false
   
