@@ -50,16 +50,20 @@ module Coral
         error %("#{existing}" already exists)
       end
       new_repo = Repository.new(repo.name, new_version)
-      links = %w(config refs logs/refs objects info hooks packed-refs remotes rr-cache svn)
-      FileUtils.mkdir_p(new_repo.git_path + 'logs', fileutils_options)
       
-      for link in links
+      for link in %w(config refs logs/refs packed-refs objects info hooks)
         source_path = repo.git_path + link
         target_path = new_repo.git_path + link
-        FileUtils.ln_s(source_path.relative_path_from(target_path.dirname), target_path, fileutils_options)
+        target_dir = target_path.dirname
+        FileUtils.mkdir_p(target_dir, fileutils_options) unless target_dir.exist?
+        FileUtils.ln_s(source_path.relative_path_from(target_dir), target_path, fileutils_options)
+      end
+
+      for copy in %w(HEAD description)
+        source_path = repo.git_path + copy
+        FileUtils.cp(source_path, new_repo.git_path + copy, fileutils_options) if source_path.exist?
       end
       
-      FileUtils.cp(repo.git_path + 'HEAD', new_repo.git_path + 'HEAD', fileutils_options)
       say new_repo.path
       index_add(new_repo)
       
