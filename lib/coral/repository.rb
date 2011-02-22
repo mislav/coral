@@ -56,8 +56,8 @@ module Coral
     def guess_version_from_github
       results = self.class.search_github(name)
       unless results.empty?
-        @name = results.first["name"]
-        @version = results.first["username"]
+        @name = results.first[:name]
+        @version = results.first[:username]
       end
     end
     
@@ -77,7 +77,7 @@ if $0 == __FILE__
   FakeWeb.allow_net_connect = false
   
   FakeWeb.register_uri(:get, 'http://github.com/api/v2/yaml/repos/search/will_paginate', :body => YAML.dump(
-    "repositories" => [{"name" => "will_paginate", "username" => "mislav"}]
+    "repositories" => [{:name => "will_paginate", :username => "mislav"}]
   ))
   
   describe Coral::Repository do
