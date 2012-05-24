@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+## Searches source files inside current gem bundle.
+#
+# All arguments are forwarded to ack.
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+dirs="$(coral-bundle-spec-read lib_dirs)"
+
+exec ack --ruby "$@" $dirs

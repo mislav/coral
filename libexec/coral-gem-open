@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+## Open a gem in the text editor.
+#
+# Arguments:
+#   - gem name (exact or pattern)
+#   - version constraint (optional)
+#
+# If there is a Gemfile and there is no version constraint, first tries to
+# locate the gem as part of the bundle.
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+dir="$(coral-gem-dir "$@")"
+readme="$(coral-find-readme "$dir" | head -1)"
+
+if [[ -n $GEM_EDITOR ]]; then
+  export EDITOR="$GEM_EDITOR"
+fi
+
+if [[ -z $readme ]]; then
+  exec coral-open-dir "$dir"
+else
+  exec coral-open-dir "$dir" "$readme"
+fi

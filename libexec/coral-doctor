@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+[[ $1 = "-s" ]] && script=1
+retval=0
+brews=""
+gems=""
+
+say() {
+  echo -e "$@"
+}
+
+fail() {
+  if [[ -z $script ]] && [[ $# -ne 0 ]]; then
+    say
+    say $@
+  fi
+  retval=1
+}
+
+missing() {
+  if which "$1" >/dev/null; then
+    return 1
+  else
+    fail "\`${1}' not found"
+    return 0
+  fi
+}
+
+gem_missing() {
+  if ruby -rubygems -e "require '${2:-$1}'" 2>/dev/null; then
+    return 1
+  else
+    fail "'${1}' gem not found"
+    return 0
+  fi
+}
+
+if ruby -r rubygems -e ''; then
+  [[ -z $script ]] && say "Using Ruby:\n  $(ruby -v)"
+else
+  fail
+fi
+
+which rbenv >/dev/null && rbenv rehash
+
+if missing git; then
+  brews="${brews} git"
+fi
+
+if missing ack; then
+  brews="${brews} ack"
+fi
+
+if missing asciidoc; then
+  brews="${brews} asciidoc"
+fi
+
+if missing curl; then
+  brews="${brews} curl"
+fi
+
+if missing bundle; then
+  gems="${gems} bundler"
+fi
+
+if gem_missing github-markup github/markup; then
+  gems="${gems} github-markup"
+fi
+
+if gem_missing github-markdown github/markdown; then
+  gems="${gems} github-markdown"
+fi
+
+if gem_missing rdoc; then
+  gems="${gems} rdoc"
+fi
+
+if gem_missing redcloth; then
+  gems="${gems} redcloth"
+fi
+
+if gem_missing pygments.rb pygments; then
+  gems="${gems} pygments.rb"
+fi
+
+if [[ $retval -ne 0 ]]; then
+  if [[ -z $script ]]; then
+    say
+    say "You can install missing dependencies with:"
+    say '  eval "$(coral doctor -s)"'
+  else
+    [[ -n $brews ]] && echo brew install${brews}
+    [[ -n $gems  ]] && echo gem install --no-rdoc --no-ri${gems}
+    exit 0
+  fi
+fi
+
+exit $retval

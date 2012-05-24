@@ -45,6 +45,17 @@ path)
 
 Display full filesystem path to a repository in Coral."
 ;;
+doctor)
+  echo "usage: coral doctor [-s]
+
+Displays missing dependencies. When \`-s' is given, output a script suitable for
+eval which installs those dependencies."
+;;
+bundle-ack)
+  echo "usage: coral bundle-ack [<options>] <pattern>
+
+Searches inside lib directories of Ruby gems in the current bundle using ack."
+;;
 *)
   command_path="$(command -v "coral-$1" || true)"
   if [ -n "$command_path" ]; then

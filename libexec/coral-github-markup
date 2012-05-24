@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby -rubygems
+## Render markup from a file and output HTML.
+#
+# This script facilitates using the "github-markup" gem, and configures Markdown
+# processing to be the same as on GitHub.com:
+#
+# * fenced code blocks & syntax highlighting using "pygments.rb" gem
+# * sanitizes unsafe HTML
+# * turns off intra-emphasis feature
+
+file = ARGV[0]
+
+unless file and File.exist? file
+  warn "usage: #$0 <file>"
+  exit 2
+end
+
+begin
+  require 'github/markup'
+rescue LoadError
+  abort $!.message
+end
+
+renderer = nil
+html_options = {}
+markdown_options = {
+  :autolink => true,
+  :no_intra_emphasis => true,
+  :fenced_code_blocks => true
+}
+
+html_renderer = lambda {
+  renderer ||= begin
+    old_level, $-w = $-w, nil
+    require 'pygments'
+  rescue LoadError
+    warn "error loading pygments.rb; no syntax highlighting available"
+    Redcarpet::Render::HTML
+  else
+    require 'cgi'
+    class RenderHtml < Redcarpet::Render::HTML
+      def block_code(code, language)
+        if language
+          Pygments.highlight(code, :lexer => language)
+        else
+          # can't call super: https://github.com/tanoku/redcarpet/issues/51
+          "<pre><code>#{CGI.escapeHTML code}</code></pre>"
+        end
+      end
+    end
+    RenderHtml
+  ensure
+    $-w = old_level
+  end
+}
+
+GitHub::Markup.markup(:redcarpet, /md|mkdn?|mdown|markdown/) do |content|
+  markdown = Redcarpet::Markdown.new \
+    html_renderer.call.new(html_options),
+    markdown_options
+
+  markdown.render(content)
+end
+
+puts GitHub::Markup.render(file)

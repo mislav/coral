@@ -1,0 +1,2 @@
+#!/bin/sh
+coral-fetch-url http://rubygems.org/api/v1/gems/${1}.json | coral-parse-json

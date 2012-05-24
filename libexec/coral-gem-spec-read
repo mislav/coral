@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby -rubygems
+## Print information from a gemspec.
+#
+# Arguments:
+#   - method name to read from spec
+#   - gem name (exact or pattern)
+#   - version constraint (optional)
+#
+# Error codes:
+#   2: gem not found
+#   3: multiple gems matched the name pattern
+#   4: the field value to read is empty
+
+method, name, ver = ARGV
+ver ||= ">= 0"
+
+specs = Gem::Specification.find_all {|s| s.name == name }
+
+if specs.empty?
+  re = /#{name}/
+  specs = Gem::Specification.find_all {|s| s.name =~ re }
+  names = specs.map {|s| s.name }.uniq
+
+  if names.size > 1
+    $stderr.puts "multiple gems match: #{names.sort.inspect}"
+    exit 3
+  end
+end
+
+req = Gem::Version::Requirement.new ver
+
+if found = specs.find_all {|s| req.satisfied_by? s.version }.sort_by {|s| s.version }.last
+  value = found.send(method)
+
+  if value.nil? or value.respond_to?(:empty) && value.empty?
+    $stderr.puts "#{method} is blank"
+    exit 4
+  else
+    puts value
+  end
+else
+  $stderr.puts "gem not found"
+  exit 2
+end

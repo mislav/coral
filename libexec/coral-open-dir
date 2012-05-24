@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+## Open a directory in the text editor.
+#
+# If the EDITOR is vim, it changes vim's current directory to the target
+# directory. In vim, it can also load additional files in buffers.
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+dir="$1"
+
+if [[ $# -gt 1 ]]; then
+  shift
+fi
+
+if [ -z "$EDITOR" ]; then
+  echo 'no $EDITOR set' >&2
+  return 2
+else
+  case ${EDITOR%% *} in
+  vim | mvim | gvim )
+    exec $EDITOR --cmd "cd ${dir// /\\ }" "$@"
+    ;;
+  * )
+    exec $EDITOR "$dir"
+    ;;
+  esac
+fi

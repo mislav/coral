@@ -1,0 +1,44 @@
+#!/usr/bin/env ruby -rubygems
+## Extract information from gemspecs in the current bundle.
+#
+# Arguments:
+#   - method name to read from gem spec;
+#     supports special value "lib_dirs"
+
+require 'bundler'
+
+$\ = "\n"
+$, = " "
+with_name = ARGV.delete '--with-name'
+with_version = ARGV.delete '--with-version'
+method = ARGV[0]
+
+begin
+  specs = Bundler.load.specs
+rescue
+  abort $!.message
+else
+  case method
+  when 'lib_dirs'
+    dirs = Dir.glob(specs.map {|spec| spec.lib_dirs_glob })
+    print dirs.join($\)
+  else
+    errors = []
+    specs.each { |spec|
+      begin
+        value = spec.send(method)
+      rescue
+        $stderr.puts $!.message
+        exit 2
+      else
+        unless value.nil? or value.respond_to?(:empty?) && value.empty?
+          extra = with_name ? "#{spec.name}#{$,}" : ''
+          extra << "#{spec.version}#{$,}" if with_version
+
+          value = value.join($\ + extra) if value.respond_to?(:join)
+          print extra + value
+        end
+      end
+    }
+  end
+end

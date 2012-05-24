@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+## Output the gem's GitHub project URL
+#
+# Arguments:
+#   - gem name (exact)
+#   - URL type; one of "git" or "ssh" (optional)
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+# try if the local gem's homepage is a GitHub URL
+project="$(coral-gem-spec-read homepage "$1" 2>/dev/null | coral-filter-gh-project | head -1)"
+
+if [ -z "$project" ]; then
+  # fetch the gem's remote info to scan the URLs
+  project="$(coral-gem-remote-info "$1" | grep -E '^[a-z_]+_uri' | coral-filter-gh-project | head -1)"
+fi
+
+if [ -z "$project" ]; then
+  echo "GitHub project not found." >&2
+  exit 1
+else
+  case "$2" in
+  "git" )
+    url=git://github.com/${project}.git
+    ;;
+  "ssh" )
+    url=git@github.com:${project}.git
+    ;;
+  * )
+    url=https://github.com/${project}
+    ;;
+  esac
+
+  echo $url
+fi

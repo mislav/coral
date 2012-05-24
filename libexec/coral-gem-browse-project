@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+## Open the gem's GitHub project page in the web browser.
+#
+# Arguments:
+#   - gem name (exact)
+#   - project subpage to navigate to, e.g. "issues" (optional)
+#
+# Requires `git web--browse` command.
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+url="$(coral-gem-project-url "$1")"
+
+# add subpage
+[ -n "$2" ] && url=${url}/${2#/}
+
+exec git web--browse $url

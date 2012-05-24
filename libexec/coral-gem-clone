@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+## Attempts to clone gem's source code from GitHub.
+#
+# Arguments:
+#   - gem name (exact)
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+url="$(coral-gem-project-url "$1" git)"
+shift 1
+
+exec git clone $url "$@"

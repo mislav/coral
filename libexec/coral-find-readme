@@ -1,0 +1,6 @@
+#!/bin/sh
+## Finds README files in the given directory.
+#
+# Does not recurse into nested directories.
+
+find "$@" -maxdepth 1 -iname 'readme*' | sort

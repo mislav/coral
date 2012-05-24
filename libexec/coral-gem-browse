@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+## Open the gem's home page in the web browser.
+#
+# Arguments:
+#   - gem name (exact or pattern)
+#
+# Requires `git web--browse` command.
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+homepage="$(coral-gem-spec-read homepage "$1")"
+
+exec git web--browse $homepage

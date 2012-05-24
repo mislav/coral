@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+## Output gem's root directory on the filesystem.
+#
+# Arguments:
+#   - gem name (exact or pattern)
+#   - version constraint (optional)
+#
+# If in a context of a gem bundle and there is no version constraint,
+# search the bundle first (only exact gem name will match).
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+if [ -z "$2" ] && [ -n "$BUNDLE_GEMFILE" -o -f Gemfile ]; then
+  dir="$(bundle show "$1" 2>/dev/null || true)"
+fi
+
+if [ -n "$dir" ]; then
+  echo "$dir"
+else
+  coral-gem-spec-read full_gem_path "$@"
+fi
