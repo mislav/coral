@@ -1,0 +1,38 @@
+#!/usr/bin/env ruby -rubygems
+## Parse nested JSON structure into key-value pairs delimited by tab character.
+
+require 'json'
+
+$\ = "\n"
+json = ARGF.read
+exit 2 if json.empty?
+
+def dump obj, parent_key = nil
+  case obj
+  when Array
+    obj.each_with_index {|o,i| dump(o, "#{parent_key}[#{i}]") }
+  when Hash
+    prefix = parent_key ? "#{parent_key}." : ''
+    obj.each {|key, value| dump(value, "#{prefix}#{key}") }
+  else
+    if dump_value? obj
+      $> << parent_key << "\t"
+      print obj
+    end
+  end
+end
+
+def dump_value? value
+  !( value.nil? or
+     value.respond_to?(:include?) && value.include?($/) or
+     value.respond_to?(:empty?) && value.empty? )
+end
+
+begin
+  data = JSON.parse json
+rescue
+  $stderr.puts $!.message
+  exit 1
+else
+  dump data
+end

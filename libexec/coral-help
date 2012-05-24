@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+case "$1" in
+"") echo "usage: coral <command> [<args>]
+
+Main commands:
+  list        List repos in Coral
+  clone       Clone a GitHub repo to Coral
+  checkout    Initialize a new working copy for a repo in Coral
+  path        Display a path to a repo in Coral
+  doctor      Report missing dependencies
+  commands    List all available commands
+
+See 'coral help <command>' for information on a specific command."
+;;
+clone)
+  echo "\
+usage: coral clone <search-term>
+       coral clone <owner>/<repo-name>
+       coral clone <github-url>
+
+Clones a GitHub repo to a location in \$CORAL_ROOT/repos/
+(~/.coral/repos by default)."
+;;
+checkout)
+  echo "usage: coral checkout <repo> <version>
+
+Creates a new working copy for a repository in Coral. The new repo is named
+'<repo>@<version>' and, altough it's a separate directory, it shares the same
+git repo as the original working copy.
+
+If <version> corresponds to a git tag, branch, or remote, the new working copy
+will be switched to the corresponding revision."
+;;
+list)
+  echo "usage: coral list [<pattern>]
+
+Lists names of repositories in \$CORAL_ROOT, optionally filtered to ones that
+start with <pattern>."
+;;
+path)
+  echo "usage: coral path <repo>[@<version>]
+
+Display full filesystem path to a repository in Coral."
+;;
+*)
+  command_path="$(command -v "coral-$1" || true)"
+  if [ -n "$command_path" ]; then
+    echo "The \`$1' command isn't documented yet."
+    echo
+    echo "You can view the command's source here:"
+    echo "$command_path"
+    echo
+  else
+    echo "coral: no such command \`$1'" >&2
+    exit 1
+  fi
+esac

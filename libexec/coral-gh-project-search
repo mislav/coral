@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+# https://gist.github.com/fdebc7c08101c3246ee2
+url="https://api.github.com/legacy/repos/search/${1}"
+
+coral-fetch-url "$url" | coral-parse-json | grep -E '\.url\b' | cut -f2

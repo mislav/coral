@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+name="$1"
+repo_path="$CORAL_ROOT/repos/${name}"
+
+if [[ $name = ${name%@*} ]]; then
+  for repo_dir in "${repo_path}@"*; do
+    if [[ ! -L ${repo_dir}/.git/config ]]; then
+      echo "$repo_dir"
+      exit 0
+    fi
+  done
+elif [[ -d $repo_path ]]; then
+  echo "$repo_path"
+  exit 0
+fi
+
+echo "coral-path: could not find \`${name}'" >&2
+exit 1

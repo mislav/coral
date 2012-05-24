@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+shopt -s nullglob
+
+{ for path in ${PATH//:/$'\n'}; do
+    for command in "${path}/coral-"*; do
+      echo ${command##*coral-}
+    done
+  done
+} | sort | uniq

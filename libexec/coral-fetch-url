@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+url="$1"
+shift 1
+
+[[ -z $TMPDIR ]] && TMPDIR=/tmp
+
+if [[ $url = "--clear" ]]; then
+  rm -rf "${TMPDIR%/}/coral"
+  exit
+fi
+
+cache="${TMPDIR%/}/coral/${url#*://}"
+expires="60 * 60 * 24"
+
+if [[ $(date +%s) -lt "$(stat -qf %m "$cache") + $expires" ]]; then
+  cat "$cache"
+else
+  mkdir -p "$(dirname "$cache")"
+  curl -fsSLG "$url" "$@" | tee "$cache"
+fi

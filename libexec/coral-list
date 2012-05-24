@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+prefix="$1"
+
+{ for repo_dir in "$CORAL_ROOT/repos/${prefix}"*; do
+  if [[ -f ${repo_dir}/.git/config ]]; then
+    name=$(basename "$repo_dir")
+    echo ${name%@*}
+  fi
+done
+} | sort --ignore-case

@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+## Create a new directory and make it a working copy of an existing git repo by
+# setting up necessary symlinks.
+#
+# based on https://github.com/git/git/blob/afa0876/contrib/workdir/git-new-workdir
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+if [[ $1 = "--force" ]]; then
+  force=1
+  shift 1
+fi
+
+origin="${1?}"
+workdir="${2?}"
+
+die() {
+  echo -e "$@" >&2
+  exit 1
+}
+
+relative_link() {
+  mkdir -p "$(dirname "$2")"
+	ln -sfhv "$(relative_path "$(dirname "$2")" "$1")" "$2"
+}
+
+relative_path() {
+  src="$1"
+  dest="$2"
+  rel=""
+  until [[ ${dest:0:${#src}+1} = "${src}/" ]]; do
+    src="$(dirname "$src")"
+    [[ $src = / ]] && src=""
+    rel="${rel}../"
+  done
+
+  if [[ -z $src ]]; then
+    echo $dest
+  else
+    echo ${rel}${dest#${src}/}
+  fi
+}
+
+[[ -z $force ]] && [[ -e $workdir ]] && die "destination ${workdir} already exists"
+
+git_dir=$(cd "$origin" 2>/dev/null && git rev-parse --git-dir 2>/dev/null) || \
+  die "not a git repository: ${origin}"
+
+if [[ $git_dir = . ]]; then
+  git_dir="$origin"
+else
+  git_dir="${origin}/${git_dir}"
+fi
+
+git_dir="$(cd "$git_dir" && pwd)"
+workdir="$(mkdir -p "$workdir" && cd "$workdir" && pwd)"
+
+[[ -h "${git_dir}/config" ]] && die "error: ${origin} is a working copy itself"
+
+for item in config refs logs/refs objects info hooks packed-refs remotes rr-cache svn
+do
+	relative_link "${git_dir}/${item}" "${workdir}/.git/${item}"
+done
+
+for file in HEAD description; do
+  src="${git_dir}/${file}"
+  dest="${workdir}/.git/${file}"
+  [[ -f $src ]] && [[ ! -f $dest ]] && cp -v "$src" "$dest"
+done

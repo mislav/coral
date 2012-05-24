@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+origin="$(coral-path "$1")"
+workdir="${CORAL_ROOT}/repos/${1%@*}@${2}"
+
+coral-git-workdir "$origin" "$workdir" >/dev/null
+
+cd "$workdir"
+
+if git rev-parse --quiet --verify "$2" >/dev/null; then
+  git checkout --quiet "$2"
+elif git rev-parse --quiet --verify "origin/${2}" >/dev/null; then
+  git checkout --track "origin/${2}"
+elif git remote | grep -x "$2" >/dev/null; then
+  git checkout --track -b "$2" "${2}/master"
+else
+  git checkout -f HEAD
+fi

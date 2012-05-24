@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+name="${1?}"
+
+if [[ ${name%/*} = ${name} ]]; then
+  name="$(coral-gh-project-search "$name" | head -1)"
+  if [[ -z $name ]]; then
+    echo "searching GitHub.com for \`$1' yielded no results" >&2
+    exit 1
+  fi
+fi
+
+name_with_owner="$(echo "$name" | coral-filter-gh-project)"
+[[ -n $name_with_owner ]] || name_with_owner="$1"
+
+name="${name_with_owner#*/}"
+owner="${name_with_owner%/*}"
+
+repo_path="${CORAL_ROOT}/repos/${name}@${owner}"
+
+mkdir -p "$(dirname "$repo_path")"
+
+git clone -v git://github.com/${owner}/${name}.git "$repo_path"
