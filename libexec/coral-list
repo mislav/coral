@@ -5,9 +5,10 @@ set -e
 prefix="$1"
 
 { for repo_dir in "$CORAL_ROOT/repos/${prefix}"*; do
-  if [[ -f ${repo_dir}/.git/config ]]; then
+  if [[ ! -L ${repo_dir}/.git/config ]]; then
     name=$(basename "$repo_dir")
-    echo ${name%@*}
+    versions="$(coral-list-checkouts "$name")"
+    echo ${name%@*} "(${versions//$'\n'/, })"
   fi
 done
 } | sort --ignore-case
