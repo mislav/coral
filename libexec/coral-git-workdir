@@ -7,7 +7,7 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-if [[ $1 = "--force" ]]; then
+if [[ $1 = "--force" ]] || [[ $1 = "-f" ]]; then
   force=1
   shift 1
 fi

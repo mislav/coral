@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+if [[ $1 = "--force" ]] || [[ $1 = "-f" ]]; then
+  force=1
+  shift 1
+fi
+
+repo="$(coral-path "$1")"
+repo_rel="..${repo#$CORAL_ROOT}"
+
+for binfile in "${repo}/bin/"*; do
+  bindest="${CORAL_ROOT}/bin/$(basename "$binfile")"
+
+  if [[ -n $force ]] || [[ ! -f $bindest ]]; then
+    if head -1 "$binfile" | grep ruby >/dev/null; then
+      { echo "#!/bin/sh"
+        echo "dir=\"\$(cd \"\$(dirname \"\$0\")/${repo_rel}\" && pwd)\""
+        echo "RUBYLIB=\"\${dir}/lib:\$RUBYLIB\" \"\${dir}${binfile#$repo}\" \"\$@\""
+      } > "$bindest"
+      chmod +x "$bindest"
+    else
+      ln -shfv "$repo_rel" "$bindest"
+    fi
+    echo "installed $bindest"
+  else
+    echo "$bindest already exists" >&2
+    exit 1
+  fi
+done
