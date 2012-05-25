@@ -4,8 +4,14 @@
 BEGIN {
   name  = /\w[\w.-]*/
   owner = /[a-zA-Z0-9-]+/
-  url1  = %r{ :// (?:wiki\.)? github\.com / (#{owner}) / (#{name})  }x
-  url2  = %r{ :// (#{owner}) \. github\.com / (#{name}) }x
+  url1  = %r{ :// (?:wiki\.)?   github\.com / (#{owner}) / (#{name})  }x
+  url2  = %r{                 @ github\.com : (#{owner}) / (#{name})  }x
+  url3  = %r{ :// (#{owner}) \. github\.com / (#{name})               }x
 }
 
-puts "#$1/#{$2.sub(/\.git$/, '')}" if $_ =~ url1 or $_ =~ url2
+case $_
+when url1, url2
+  puts "#$1/" + $2.sub(/\.git$/, '')
+when url3
+  puts "#$1/#$2}"
+end
