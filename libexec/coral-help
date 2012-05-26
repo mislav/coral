@@ -5,13 +5,26 @@ set -e
 case "$1" in
 "") echo "usage: coral <command> [<args>]
 
-Main commands:
-  list        List repos in Coral
+Commands that manage repositories:
+  list        List repos
   clone       Clone a GitHub repo to Coral
-  checkout    Initialize a new working copy for a repo in Coral
-  path        Display a path to a repo in Coral
+  checkout    Initialize a new working copy for a repo
+  path        Display a path to a repo
+  binstub     Install binstubs for repo
+
+General commands:
   doctor      Report missing dependencies
   commands    List all available commands
+
+Bundler commands:
+  bundle-ack          Search across all files in the current bundle
+  bundle-spec-read    Read information from bundled gem specs
+
+RubyGems commands:
+  gem-dir             Display filesystem path to a gem
+  gem-open            Open a gem in text editor
+  gem-browse          Open gem's homepage in web browser
+  gem-browse-project  Open gem's GitHub page in web browser
 
 See 'coral help <command>' for information on a specific command."
 ;;
@@ -54,6 +67,11 @@ path)
 
 Display full filesystem path to a repository in Coral."
 ;;
+binstub)
+  echo "usage: coral binstub <repo>[@<version>]
+
+Installs binstubs for the specified repo to \$CORAL_ROOT/bin."
+;;
 doctor)
   echo "usage: coral doctor [-s]
 
@@ -64,6 +82,23 @@ bundle-ack)
   echo "usage: coral bundle-ack [<options>] <pattern>
 
 Searches inside lib directories of Ruby gems in the current bundle using ack."
+;;
+bundle-spec-read)
+  echo "usage: coral bundle-spec-read <method> [--with-name] [--with-version]
+
+Displays the value returned by <method> of each gemspec in the current Bundle.
+<method> can be any instance method of Gem::Specification, or the special value
+\`lib_dirs' which lists all lib directories for each gem.
+
+When \`--with-name/version' is present, prepend the name/version of each gem in
+the output separated by tab characters.
+
+Some interesting methods are:
+  author(s)
+  email
+  summary, description
+  homepage
+  date"
 ;;
 gem-standalone)
   echo "usage: coral gem-standalone <gem-name> [<gem-version>]
