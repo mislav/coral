@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+name="${1%@*}"
+version="${1#*@}"
+target_dir="$(coral-path "$1")"
+
+readlink=$(type -p greadlink readlink | head -1)
+link="$($readlink "${target_dir}/.git/config")"
+old_canonical=${link#*/$name@}
+source_dir="$(coral-path "${name}@${old_canonical%%/*}")"
+
+coral-git-workdir --mv --force "$source_dir" "$target_dir" >/dev/null
+
+for ver in $(coral-list-checkouts "$(basename "$source_dir")" | grep -vx "$version"); do
+  dir="$(coral-path "${name}@${ver}")"
+  coral-git-workdir --force "$target_dir" "$dir" >/dev/null
+done

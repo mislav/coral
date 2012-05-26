@@ -7,18 +7,32 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-if [[ $1 = "--force" ]] || [[ $1 = "-f" ]]; then
-  force=1
-  shift 1
-fi
-
-origin="${1?}"
-workdir="${2?}"
-
 die() {
   echo -e "$@" >&2
   exit 1
 }
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  --force | -f )
+    force=1
+    shift 1
+    ;;
+  --mv )
+    move=1
+    shift 1
+    ;;
+  -* )
+    die "invalid flag: $1"
+    ;;
+  * )
+    break
+    ;;
+  esac
+done
+
+origin="${1?}"
+workdir="${2?}"
 
 relative_link() {
   mkdir -p "$(dirname "$2")"
@@ -60,7 +74,13 @@ workdir="$(mkdir -p "$workdir" && cd "$workdir" && pwd)"
 
 for item in config refs logs/refs objects info hooks packed-refs remotes rr-cache svn
 do
-	relative_link "${git_dir}/${item}" "${workdir}/.git/${item}"
+  if [[ -z $move ]]; then
+    relative_link "${git_dir}/${item}" "${workdir}/.git/${item}"
+  else
+    rm -f "${workdir}/.git/${item}"
+    [[ -e "${git_dir}/${item}" ]] && \
+      mv -v "${git_dir}/${item}" "${workdir}/.git/${item}"
+  fi
 done
 
 for file in HEAD description; do

@@ -34,6 +34,15 @@ git repo as the original working copy.
 If <version> corresponds to a git tag, branch, or remote, the new working copy
 will be switched to the corresponding revision."
 ;;
+set-canonical)
+  echo "usage: coral set-canonical <repo>@<version>
+
+Defines a checkout to be the default (i.e. canonical) version of this repo.
+
+The first repo that was cloned is always the main checkout, and additional
+checkouts created with \`coral checkout\` are just links to the main one. This
+command allows you to change which the main one is."
+;;
 list)
   echo "usage: coral list [<pattern>]
 
