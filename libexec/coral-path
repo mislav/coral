@@ -5,6 +5,8 @@ set -e
 name="$1"
 repo_path="$CORAL_ROOT/repos/${name}"
 
+shopt -s nullglob
+
 if [[ $name = ${name%@*} ]]; then
   for repo_dir in "${repo_path}@"*; do
     if [[ ! -L ${repo_dir}/.git/config ]]; then

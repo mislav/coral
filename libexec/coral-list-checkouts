@@ -8,7 +8,7 @@ readlink=$(type -p greadlink readlink | head -1)
 echo ${name#*@}
 
 { for repo_dir in "$CORAL_ROOT/repos/${name%@*}@"*; do
-  if readlink "${repo_dir}/.git/config" | grep "/${name}/" >/dev/null; then
+  if $readlink "${repo_dir}/.git/config" | grep "/${name}/" >/dev/null; then
     version="$(basename "$repo_dir")"
     echo ${version#*@}
   fi

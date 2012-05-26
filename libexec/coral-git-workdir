@@ -66,5 +66,7 @@ done
 for file in HEAD description; do
   src="${git_dir}/${file}"
   dest="${workdir}/.git/${file}"
-  [[ -f $src ]] && [[ ! -f $dest ]] && cp -v "$src" "$dest"
+  if [[ -f $src ]] && [[ ! -f $dest ]]; then
+    cp -v "$src" "$dest"
+  fi
 done
