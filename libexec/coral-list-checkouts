@@ -13,4 +13,4 @@ echo ${name#*@}
     echo ${version#*@}
   fi
 done
-} | sort --ignore-case
+} | coral-sort-versions

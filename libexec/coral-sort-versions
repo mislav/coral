@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -r rubygems/version
+
+sorted = STDIN.readlines.sort_by { |line|
+  ver = line.sub(/^v/, '')
+  ver = '999' unless Gem::Version.correct? ver
+  Gem::Version.create ver
+}.reverse
+
+if ARGV.include? '--filter'
+  sorted.select! {|line| Gem::Version.correct? line.sub(/^v/, '') }
+end
+
+puts sorted
