@@ -8,7 +8,7 @@
 require 'bundler'
 
 $\ = "\n"
-$, = " "
+$, = "\t"
 with_name = ARGV.delete '--with-name'
 with_version = ARGV.delete '--with-version'
 method = ARGV[0]
@@ -32,11 +32,16 @@ else
         exit 2
       else
         unless value.nil? or value.respond_to?(:empty?) && value.empty?
-          extra = with_name ? "#{spec.name}#{$,}" : ''
-          extra << "#{spec.version}#{$,}" if with_version
+          values = []
+          values << spec.name    if with_name
+          values << spec.version if with_version
 
-          value = value.join($\ + extra) if value.respond_to?(:join)
-          print extra + value
+          if value.respond_to? :join
+            value.each {|v| print(* values + [v.to_s]) }
+          else
+            values << value.to_s
+            print(*values)
+          end
         end
       end
     }
