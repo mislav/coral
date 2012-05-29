@@ -100,6 +100,12 @@ Some interesting methods are:
   homepage
   date"
 ;;
+gem-open)
+  echo "usage: coral gem-open <gem-name> [<gem-version>]
+
+Opens a gem in text editor. If <gem-version> is not given, the gem is first
+looked up in the current bundle."
+;;
 gem-standalone)
   echo "usage: coral gem-standalone <gem-name> [<gem-version>]
 

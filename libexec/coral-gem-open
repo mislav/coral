@@ -14,9 +14,9 @@ set -e
 dir="$(coral-gem-dir "$@")"
 readme="$(coral-find-readme "$dir" | head -1)"
 
-if [[ -n $GEM_EDITOR ]]; then
-  export EDITOR="$GEM_EDITOR"
-fi
+EDITOR="${VISUAL:-$EDITOR}"
+EDITOR="${GEM_EDITOR:-$EDITOR}"
+export EDITOR
 
 if [[ -z $readme ]]; then
   exec coral-open-dir "$dir"

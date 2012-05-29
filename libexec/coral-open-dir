@@ -8,21 +8,15 @@ set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
 dir="$1"
+[[ $# -gt 1 ]] && shift
 
-if [[ $# -gt 1 ]]; then
-  shift
-fi
+EDITOR="${EDITOR:-vi}"
 
-if [ -z "$EDITOR" ]; then
-  echo 'no $EDITOR set' >&2
-  return 2
-else
-  case ${EDITOR%% *} in
-  vim | mvim | gvim )
-    exec $EDITOR --cmd "cd ${dir// /\\ }" "$@"
-    ;;
-  * )
-    exec $EDITOR "$dir"
-    ;;
-  esac
-fi
+case ${EDITOR%% *} in
+vim | mvim | gvim )
+  exec $EDITOR --cmd "cd ${dir// /\\ }" "$@"
+  ;;
+* )
+  exec $EDITOR "$dir"
+  ;;
+esac
