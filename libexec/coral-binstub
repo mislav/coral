@@ -2,7 +2,7 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-if [[ $1 = "--force" ]] || [[ $1 = "-f" ]]; then
+if [[ $1 = "--force" || $1 = "-f" ]]; then
   force=1
   shift 1
 fi
@@ -13,7 +13,7 @@ repo_rel="..${repo#$CORAL_ROOT}"
 for binfile in "${repo}/bin/"*; do
   bindest="${CORAL_ROOT}/bin/$(basename "$binfile")"
 
-  if [[ -n $force ]] || [[ ! -f $bindest ]]; then
+  if [[ -n $force || ! -f $bindest ]]; then
     if head -1 "$binfile" | grep ruby >/dev/null; then
       { echo "#!/bin/sh"
         echo "dir=\"\$(cd \"\$(dirname \"\$0\")/${repo_rel}\" && pwd)\""

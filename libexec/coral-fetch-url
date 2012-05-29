@@ -2,15 +2,15 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-url="$1"
-shift 1
+TMPDIR=${TMPDIR:-/tmp}
 
-[[ -z $TMPDIR ]] && TMPDIR=/tmp
-
-if [[ $url = "--clear" ]]; then
+if [[ $1 = --clear-cache ]]; then
   rm -rf "${TMPDIR%/}/coral"
   exit
 fi
+
+url="${1?}"
+shift 1
 
 cache="${TMPDIR%/}/coral/${url#*://}"
 expires="60 * 60 * 24"

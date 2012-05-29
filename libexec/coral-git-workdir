@@ -56,7 +56,7 @@ relative_path() {
   fi
 }
 
-[[ -z $force ]] && [[ -e $workdir ]] && die "destination ${workdir} already exists"
+[[ -z $force && -e $workdir ]] && die "destination ${workdir} already exists"
 
 git_dir=$(cd "$origin" 2>/dev/null && git rev-parse --git-dir 2>/dev/null) || \
   die "not a git repository: ${origin}"
@@ -86,7 +86,7 @@ done
 for file in HEAD description; do
   src="${git_dir}/${file}"
   dest="${workdir}/.git/${file}"
-  if [[ -f $src ]] && [[ ! -f $dest ]]; then
-    cp -v "$src" "$dest"
-  fi
+  [[ -f $src && ! -f $dest ]] && cp -v "$src" "$dest"
 done
+
+exit 0

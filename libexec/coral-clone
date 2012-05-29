@@ -4,7 +4,7 @@ set -e
 
 name="${1?}"
 
-if [[ ${name%/*} = ${name} ]]; then
+if [[ $name != */* ]]; then
   name="$(coral-gh-project-search "$name" | head -1)"
   if [[ -z $name ]]; then
     echo "searching GitHub.com for \`$1' yielded no results" >&2

@@ -11,7 +11,7 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-if [ -z "$2" ] && [ -n "$BUNDLE_GEMFILE" -o -f Gemfile ]; then
+if [ $# -lt 2 ] && [ -n "$BUNDLE_GEMFILE" -o -f Gemfile ]; then
   dir="$(bundle show "$1" 2>/dev/null || true)"
 fi
 

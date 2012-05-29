@@ -13,6 +13,6 @@ set -e
 url="$(coral-gem-project-url "$1")"
 
 # add subpage
-[ -n "$2" ] && url=${url}/${2#/}
+[ -n "$2" ] && url=${url%/}/${2#/}
 
 exec git web--browse $url
