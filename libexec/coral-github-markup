@@ -1,12 +1,8 @@
 #!/usr/bin/env ruby -rubygems
 ## Render markup from a file and output HTML.
 #
-# This script facilitates using the "github-markup" gem, and configures Markdown
-# processing to be the same as on GitHub.com:
-#
-# * fenced code blocks & syntax highlighting using "pygments.rb" gem
-# * sanitizes unsafe HTML
-# * turns off intra-emphasis feature
+# This script facilitates using the "github-markup" library and configures
+# Markdown processing to be the same as on GitHub.com.
 
 file = ARGV[0]
 
@@ -22,35 +18,44 @@ rescue LoadError
 end
 
 renderer = nil
-html_options = {}
+html_options = { }
 markdown_options = {
-  :autolink => true,
-  :no_intra_emphasis => true,
-  :fenced_code_blocks => true
+  :autolink           => true,
+  :no_intra_emphasis  => true,
+  :fenced_code_blocks => true,
 }
 
 html_renderer = lambda {
   renderer ||= begin
-    old_level, $-w = $-w, nil
-    require 'pygments'
-  rescue LoadError
-    warn "error loading pygments.rb; no syntax highlighting available"
-    Redcarpet::Render::HTML
-  else
-    require 'cgi'
-    class RenderHtml < Redcarpet::Render::HTML
-      def block_code(code, language)
-        if language
-          Pygments.highlight(code, :lexer => language)
-        else
-          # can't call super: https://github.com/tanoku/redcarpet/issues/51
-          "<pre><code>#{CGI.escapeHTML code}</code></pre>"
-        end
+    class TocHTML < Redcarpet::Render::HTML
+      def header text, level
+        href = text.gsub(/<.+?>/, '').strip.gsub(/\s+/, '-').downcase
+        anchor = %(<a name="#{href}" href="\##{href}"></a>)
+        %(<h#{level}>#{anchor}#{text}</h#{level}>\n)
       end
     end
-    RenderHtml
-  ensure
-    $-w = old_level
+
+    begin
+      old_level, $-w = $-w, nil
+      require 'pygments'
+    rescue LoadError
+      warn "error loading pygments.rb; no syntax highlighting available"
+      TocHTML
+    else
+      require 'cgi'
+      Class.new(TocHTML) do
+        def block_code(code, language)
+          if language
+            Pygments.highlight(code, :lexer => language)
+          else
+            # can't call super: https://github.com/tanoku/redcarpet/issues/51
+            "<pre><code>#{CGI.escapeHTML code}</code></pre>"
+          end
+        end
+      end
+    ensure
+      $-w = old_level
+    end
   end
 }
 

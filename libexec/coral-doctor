@@ -69,8 +69,8 @@ if gem_missing github-markup github/markup; then
   gems="${gems} github-markup"
 fi
 
-if gem_missing github-markdown github/markdown; then
-  gems="${gems} github-markdown"
+if gem_missing redcarpet; then
+  gems="${gems} redcarpet"
 fi
 
 if gem_missing rdoc; then
