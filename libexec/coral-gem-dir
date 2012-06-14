@@ -12,10 +12,10 @@ set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
 if [ $# -lt 2 ] && [ -n "$BUNDLE_GEMFILE" -o -f Gemfile ]; then
-  dir="$(bundle show "$1" 2>/dev/null || true)"
+  dir="$(bundle show --no-color "$1" 2>/dev/null || true)"
 fi
 
-if [ -n "$dir" ]; then
+if [ -d "$dir" ]; then
   echo "$dir"
 else
   coral-gem-spec-read full_gem_path "$@"
