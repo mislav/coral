@@ -12,7 +12,7 @@ set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
 if [ $# -lt 2 ] && [ -n "$BUNDLE_GEMFILE" -o -f Gemfile ]; then
-  dir="$(bundle show --no-color "$1" 2>/dev/null || true)"
+  dir="$(bundle show "$1" --no-color 2>/dev/null || true)"
 fi
 
 if [ -d "$dir" ]; then
