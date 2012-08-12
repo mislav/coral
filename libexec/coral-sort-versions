@@ -1,13 +1,32 @@
-#!/usr/bin/env ruby -r rubygems/version
+#!/usr/bin/ruby
+require 'strscan'
 
-sorted = STDIN.readlines.sort_by { |line|
-  ver = line.sub(/^v/, '')
-  ver = '999' unless Gem::Version.correct? ver
-  Gem::Version.create ver
-}.reverse
+# Author: Jordi Bunster
+# https://github.com/jordi/version_sorter/blob/master/version_sorter.rb
+sort = lambda do |list|
+  ss     = StringScanner.new ''
+  pad_to = 0
+  list.each { |li| pad_to = li.size if li.size > pad_to }
 
-if ARGV.include? '--filter'
-  sorted.select! {|line| Gem::Version.correct? line.sub(/^v/, '') }
+  list.sort_by do |li|
+    ss.string = li
+    parts     = ''
+
+    if match = ss.scan_until(/\d+|[a-z]+/i)
+      parts << match.rjust(pad_to)
+    end until ss.eos?
+
+    parts
+  end
+end
+
+versions = STDIN.readlines.map {|v| v.chomp }
+
+if versions.size > 1
+  sorted = sort.call versions
+  sorted.reverse!
+else
+  sorted = versions
 end
 
 puts sorted
