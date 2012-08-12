@@ -78,7 +78,7 @@ if gem_missing rdoc; then
 fi
 
 if gem_missing redcloth; then
-  gems="${gems} redcloth"
+  gems="${gems} RedCloth"
 fi
 
 if gem_missing pygments.rb pygments; then
