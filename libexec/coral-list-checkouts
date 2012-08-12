@@ -2,10 +2,13 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-name="$1"
+name="${1?}"
 readlink=$(type -p greadlink readlink | head -1)
 
 echo ${name#*@}
+
+shopt -s failglob
+set -o pipefail
 
 { for repo_dir in "$CORAL_ROOT/repos/${name%@*}@"*; do
   if $readlink "${repo_dir}/.git/config" | grep "/${name}/" >/dev/null; then

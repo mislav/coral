@@ -4,6 +4,9 @@ set -e
 
 prefix="$1"
 
+shopt -s failglob
+set -o pipefail
+
 { for repo_dir in "$CORAL_ROOT/repos/${prefix}"*; do
   if [[ ! -L ${repo_dir}/.git/config ]]; then
     name=$(basename "$repo_dir")
