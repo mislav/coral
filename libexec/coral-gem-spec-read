@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -rubygems
+#!/usr/bin/env ruby
 ## Print information from a gemspec.
 #
 # Arguments:
@@ -10,6 +10,8 @@
 #   2: gem not found
 #   3: multiple gems matched the name pattern
 #   4: the field value to read is empty
+
+require 'rubygems'
 
 method, name, ver = ARGV
 ver ||= ">= 0"

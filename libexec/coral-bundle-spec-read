@@ -1,10 +1,11 @@
-#!/usr/bin/env ruby -rubygems
+#!/usr/bin/env ruby
 ## Extract information from gemspecs in the current bundle.
 #
 # Arguments:
 #   - method name to read from gem spec;
 #     supports special value "lib_dirs"
 
+require 'rubygems'
 require 'bundler'
 
 $\ = "\n"

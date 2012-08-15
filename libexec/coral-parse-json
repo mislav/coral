@@ -1,6 +1,7 @@
-#!/usr/bin/env ruby -rubygems
+#!/usr/bin/env ruby
 ## Parse nested JSON structure into key-value pairs delimited by tab character.
 
+require 'rubygems'
 require 'json'
 
 $\ = "\n"

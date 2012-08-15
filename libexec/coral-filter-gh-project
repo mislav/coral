@@ -1,17 +1,17 @@
-#!/usr/bin/env ruby -n
+#!/usr/bin/env ruby
 ## Extracts github project "owner/repo_name" pair from URLs in input.
 
-BEGIN {
-  name  = /\w[\w.-]*/
-  owner = /[a-zA-Z0-9-]+/
-  url1  = %r{ :// (?:wiki\.)?   github\.com / (#{owner}) / (#{name})  }x
-  url2  = %r{                 @ github\.com : (#{owner}) / (#{name})  }x
-  url3  = %r{ :// (#{owner}) \. github\.com / (#{name})               }x
-}
+name  = /\w[\w.-]*/
+owner = /[a-zA-Z0-9-]+/
+url1  = %r{ :// (?:wiki\.)?   github\.com / (#{owner}) / (#{name})  }x
+url2  = %r{                 @ github\.com : (#{owner}) / (#{name})  }x
+url3  = %r{ :// (#{owner}) \. github\.com / (#{name})               }x
 
-case $_
-when url1, url2
-  puts "#$1/" + $2.sub(/\.git$/, '')
-when url3
-  puts "#$1/#$2}"
+while gets
+  case $_
+  when url1, url2
+    puts "#$1/" + $2.sub(/\.git$/, '')
+  when url3
+    puts "#$1/#$2}"
+  end
 end

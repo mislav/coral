@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby -rubygems
+#!/usr/bin/env ruby
 ## Render markup from a file and output HTML.
 #
 # This script facilitates using the "github-markup" library and configures
@@ -14,7 +14,12 @@ end
 begin
   require 'github/markup'
 rescue LoadError
-  abort $!.message
+  if defined?(::Gem)
+    abort $!.message
+  else
+    require 'rubygems'
+    retry
+  end
 end
 
 renderer = nil
