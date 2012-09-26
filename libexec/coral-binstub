@@ -10,20 +10,22 @@ fi
 repo="$(coral-path "$1")"
 repo_rel="..${repo#$CORAL_ROOT}"
 
-for binfile in "${repo}/bin/"*; do
-  bindest="${CORAL_ROOT}/bin/$(basename "$binfile")"
+cd "$repo"
 
-  if [[ -n $force || ! -f $bindest ]]; then
+for binfile in bin/*; do
+  bindest="${CORAL_ROOT}/${binfile}"
+
+  if [[ -n $force || ! -e $bindest ]]; then
     if head -1 "$binfile" | grep ruby >/dev/null; then
       { echo "#!/bin/sh"
         echo "dir=\"\$(cd \"\$(dirname \"\$0\")/${repo_rel}\" && pwd)\""
-        echo "RUBYLIB=\"\${dir}/lib:\$RUBYLIB\" \"\${dir}${binfile#$repo}\" \"\$@\""
+        echo "RUBYLIB=\"\${dir}/lib:\$RUBYLIB\" \"\${dir}/${binfile}\" \"\$@\""
       } > "$bindest"
       chmod +x "$bindest"
+      echo "installed $bindest"
     else
-      ln -shfv "$repo_rel" "$bindest"
+      ln -shfv "${repo_rel}/${binfile}" "$bindest"
     fi
-    echo "installed $bindest"
   else
     echo "$bindest already exists" >&2
     exit 1
