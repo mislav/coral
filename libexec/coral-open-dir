@@ -14,7 +14,7 @@ EDITOR="${EDITOR:-vi}"
 
 case ${EDITOR%% *} in
 vim | mvim | gvim )
-  exec $EDITOR --cmd "cd ${dir// /\\ }" "$@"
+  exec $EDITOR --cmd "cd ${dir// /\\ }" --cmd 'set tags^=.git/tags' "$@"
   ;;
 * )
   exec $EDITOR "$dir"
