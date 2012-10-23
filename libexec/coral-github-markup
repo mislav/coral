@@ -51,7 +51,9 @@ html_renderer = lambda {
       Class.new(TocHTML) do
         def block_code(code, language)
           if language
-            Pygments.highlight(code, :lexer => language)
+            Pygments.highlight code,
+              :lexer => language,
+              :options => {:encoding => 'utf-8'}
           else
             # can't call super: https://github.com/tanoku/redcarpet/issues/51
             "<pre><code>#{CGI.escapeHTML code}</code></pre>"
