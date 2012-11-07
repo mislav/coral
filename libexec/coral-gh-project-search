@@ -2,7 +2,17 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-# https://gist.github.com/fdebc7c08101c3246ee2
+# http://developer.github.com/v3/search/#search-repositories
 url="https://api.github.com/legacy/repos/search/${1}"
 
-coral-fetch-url "$url" | coral-parse-json | grep -E '\.url\b' | cut -f2
+# jump through hoops because the "url" field is strangely missing
+owner_and_name="$(
+  coral-fetch-url "$url" | coral-parse-json | \
+    grep -E '\.(owner|name)\b' | head -2 | sort -r | cut -f2 | xargs echo
+)"
+
+if [[ -z $owner_and_name ]]; then
+  exit 1
+else
+  echo git://github.com/${owner_and_name/ /\/}.git
+fi
