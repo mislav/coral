@@ -2,133 +2,69 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+# content from single commented line marked with a word such as "Usage" or "Summary"
+extract_line() {
+  grep "^# ${1}:" "$2" | head -1 | cut -d ' ' -f3-
+}
+
+# content of multiple consecutive commented lines starting with a word such as "Help"
+extract_section() {
+  sed -En "/^# ${1}: /,/^[^#]/s/^# ?//p" "$2" | sed "1s/${1}: //"
+}
+
+print_summaries() {
+  for command in $(coral-commands -v); do
+    print_summary "$command"
+  done
+}
+
+# print aligned command names with help summary
+print_summary() {
+  if [ ! -h "$1" ]; then
+    local summary=$(extract_line Summary "$1")
+    if [ -n "$summary" ]; then
+      local name=$(basename "$1")
+      echo "${name#coral-}" | awk '{ printf "   %-20s   ", $1 }'
+      echo -n $summary
+      echo
+    else
+      return 1
+    fi
+  fi
+}
+
+print_help() {
+  local usage="$(extract_line Usage "$1")"
+  local halp="$(extract_section Help "$1")"
+  [ -z "$halp" ] && halp="$(extract_line Summary "$1")"
+
+  if [ -n "$usage" ]; then
+    echo Usage: $usage
+    [ -n "$halp" ] && echo && echo "$halp"
+  else
+    echo "Sorry, this command isn't documented yet." >&2
+    return 1
+  fi
+}
+
+# Provide sub completions
+if [ "$1" = "--complete" ]; then
+  exec "coral-commands"
+  exit
+fi
+
 case "$1" in
-"") echo "usage: coral <command> [<args>]
+"") echo "Usage: coral <command> [<args>]
 
-Commands that manage repositories:
-  list        List repos
-  clone       Clone a GitHub repo to Coral
-  checkout    Initialize a new working copy for a repo
-  path        Display a path to a repo
-  binstub     Install binstubs for repo
-
-General commands:
-  doctor      Report missing dependencies
-  commands    List all available commands
-
-Bundler commands:
-  bundle-ack          Search across all files in the current bundle
-  bundle-spec-read    Read information from bundled gem specs
-
-RubyGems commands:
-  gem-dir             Display filesystem path to a gem
-  gem-open            Open a gem in text editor
-  gem-browse          Open gem's homepage in web browser
-  gem-browse-project  Open gem's GitHub page in web browser
+Some useful sub commands are:
+$(print_summaries)
 
 See 'coral help <command>' for information on a specific command."
-;;
-clone)
-  echo "\
-usage: coral clone <search-term>
-       coral clone <owner>/<repo-name>
-       coral clone <github-url>
-
-Clones a GitHub repo to a location in \$CORAL_ROOT/repos/
-(~/.coral/repos by default)."
-;;
-checkout)
-  echo "usage: coral checkout <repo> <version>
-
-Creates a new working copy for a repository in Coral. The new repo is named
-'<repo>@<version>' and, altough it's a separate directory, it shares the same
-git repo as the original working copy.
-
-If <version> corresponds to a git tag, branch, or remote, the new working copy
-will be switched to the corresponding revision."
-;;
-set-canonical)
-  echo "usage: coral set-canonical <repo>@<version>
-
-Defines a checkout to be the default (i.e. canonical) version of this repo.
-
-The first repo that was cloned is always the main checkout, and additional
-checkouts created with \`coral checkout\` are just links to the main one. This
-command allows you to change which the main one is."
-;;
-list)
-  echo "usage: coral list [<pattern>]
-
-Lists names of repositories in \$CORAL_ROOT, optionally filtered to ones that
-start with <pattern>."
-;;
-path)
-  echo "usage: coral path <repo>[@<version>]
-
-Display full filesystem path to a repository in Coral."
-;;
-binstub)
-  echo "usage: coral binstub <repo>[@<version>]
-
-Installs binstubs for the specified repo to \$CORAL_ROOT/bin."
-;;
-doctor)
-  echo "usage: coral doctor [-s]
-
-Displays missing dependencies. When \`-s' is given, output a script suitable for
-eval which installs those dependencies."
-;;
-bundle-ack)
-  echo "usage: coral bundle-ack [<options>] <pattern>
-
-Searches inside lib directories of Ruby gems in the current bundle using ack."
-;;
-bundle-spec-read)
-  echo "usage: coral bundle-spec-read <method> [--with-name] [--with-version]
-
-Displays the value returned by <method> of each gemspec in the current Bundle.
-<method> can be any instance method of Gem::Specification, or the special value
-\`lib_dirs' which lists all lib directories for each gem.
-
-When \`--with-name/version' is present, prepend the name/version of each gem in
-the output separated by tab characters.
-
-Some interesting methods are:
-  author(s)
-  email
-  summary, description
-  homepage
-  date"
-;;
-gem-open)
-  echo "usage: coral gem-open <gem-name> [<gem-version>]
-
-Opens a gem in text editor. If <gem-version> is not given, the gem is first
-looked up in the current bundle."
-;;
-gem-standalone)
-  echo "usage: coral gem-standalone <gem-name> [<gem-version>]
-
-Installs a Ruby gem into \$prefix (default: /usr/local) using Bundler to make
-its runtime self-contained, and putting its executables into \`\$prefix/bin/'.
-Running the installed executables doesn't require RubyGems or Bundler anymore.
-
-This is useful for gems that are command-line tools, but the overhead of
-RubyGems and activating its dependencies slows it down too much."
-;;
-sort-versions)
-  echo "usage: coral sort-versions
-
-Sorts lines from STDIN representing version numbers."
 ;;
 *)
   command_path="$(command -v "coral-$1" || true)"
   if [ -n "$command_path" ]; then
-    echo "The \`$1' command isn't documented yet."
-    echo
-    echo "You can view the command's source here:"
-    echo "$command_path"
-    echo
+    print_help "$(which "$command_path")"
   else
     echo "coral: no such command \`$1'" >&2
     exit 1

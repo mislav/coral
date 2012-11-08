@@ -2,11 +2,19 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+[ "$1" = '-v' ] && verbose=true
+
 shopt -s nullglob
 
 { for path in ${PATH//:/$'\n'}; do
     for command in "${path}/coral-"*; do
-      echo ${command##*coral-}
+      if [ -x "$command" ]; then
+        if [ -n $verbose ]; then
+          echo $command
+        else
+          echo ${command##*coral-}
+        fi
+      fi
     done
   done
 } | sort | uniq
