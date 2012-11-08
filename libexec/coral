@@ -27,17 +27,17 @@ else
 fi
 export CORAL_ROOT
 
-bin_path="$(abs_dirname "$0")"
-export PATH="${bin_path}:${PATH}"
+libexec_path="$(abs_dirname "$0")"
+export PATH="${libexec_path}:${PATH}"
 
 command="$1"
 case "$command" in
 "" | "-h" | "--help" )
-  echo -e "coral 0.1\n$(coral-help)" >&2
+  exec coral-help
   ;;
 * )
   command_path="$(command -v "coral-$command" || true)"
-  if [ -z "$command_path" ]; then
+  if [ ! -x "$command_path" ]; then
     echo "${0}: no such command \`$command'" >&2
     exit 1
   fi
