@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
-## Output gem's root directory on the filesystem.
+# Usage: coral gem-dir <gem-name> [<gem-version>]
+# Summary: Print the root directory of a gem
+# Help: Outputs the filesystem path for a gem's root directory.
 #
-# Arguments:
-#   - gem name (exact or pattern)
-#   - version constraint (optional)
-#
-# If in a context of a gem bundle and there is no version constraint,
-# search the bundle first (only exact gem name will match).
+# If there is a Gemfile and there is no version constraint, the gem is searched
+# for in the current bundle first.
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

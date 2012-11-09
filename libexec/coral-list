@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# Usage: coral list [<pattern>]
+# Summary: List local repositories in Coral
+# Help: Lists names of repositories in $CORAL_ROOT, optionally filtered to ones
+# starting with <pattern>.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

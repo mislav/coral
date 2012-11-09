@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+# Usage: coral gem-standalone <gem-name> [<gem-version>]
+# Summary: Install a Ruby gem as a standalone utility
+# Help: Installs a Ruby gem into $prefix ("/usr/local" by default) using
+# Bundler to make its runtime self-contained, and putting its executables into
+# "$prefix/bin".  Running the installed executables doesn't require RubyGems or
+# Bundler anymore.
+#
+# This is useful for gems that are command-line tools, but the overhead of
+# RubyGems and activating its dependencies slows it down too much.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

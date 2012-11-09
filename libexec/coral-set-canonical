@@ -1,4 +1,14 @@
 #!/usr/bin/env bash
+# Usage: coral set-canonical <repo>@<version>
+# Summary: Define the main checkout for this repo
+# Help: Changes which checkout of this repo is the canonical (i.e. main) one.
+# The main checkout is the default pick for commands that operate on a Coral
+# repo but don't specify an explicit version.
+#
+# The first repo that was cloned is always the main checkout, and additional
+# checkouts created with `coral checkout` are just links to the main one. This
+# allows you to reassign the main checkout.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

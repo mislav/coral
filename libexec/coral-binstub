@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Usage: coral binstub [-f | --force] <repo>[@<version>]
+# Summary: Install binstubs for a repo to $CORAL_ROOT/bin
+# Help: Installs binstubs for the specified repo to $CORAL_ROOT/bin, which
+# should be already present in your $PATH. This enables accessing executables
+# from locally cloned projects.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

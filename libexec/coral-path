@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# Usage: coral path <repo>[@<version>]
+# Summary: Show filesystem path for a repo
+# Help: Displays the full filesystem path for a repository in Coral.
+#
+# If there are multiple checkouts for a single repo, it displays the path for
+# the main checkout by default (see `coral set-canonical`). You can target
+# specific versions with <version>.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

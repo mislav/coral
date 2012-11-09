@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-## Open a gem in the text editor.
+# Usage: coral gem-open <gem-name> [<gem-version>]
+# Summary: Open gem's source code in the text editor
+# Help: Opens a gem's source code in the text editor. If there is a Gemfile and
+# there is no version constraint, first tries to locate the gem as part of the
+# bundle.
 #
-# Arguments:
-#   - gem name (exact or pattern)
-#   - version constraint (optional)
+# If there is a README file as part of the gem, it will be opened initially.
 #
-# If there is a Gemfile and there is no version constraint, first tries to
-# locate the gem as part of the bundle.
+# The editor program is read from $GEM_EDITOR, then $VISUAL, then $EDITOR.
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

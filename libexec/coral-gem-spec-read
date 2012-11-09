@@ -1,10 +1,7 @@
 #!/usr/bin/env ruby
-## Print information from a gemspec.
-#
-# Arguments:
-#   - method name to read from spec
-#   - gem name (exact or pattern)
-#   - version constraint (optional)
+# Usage: coral gem-spec-read <method> <gem-name> [<gem-version>]
+# Summary: Print information from a gemspec
+# Help: Prints the value returned by <method> of a gem specification.
 #
 # Error codes:
 #   2: gem not found

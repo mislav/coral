@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+# Usage: coral doctor [-s]
+# Summary: Check dependencies for Coral utilities
+# Help: Checks that dependencies for various Coral utilities are satisfied.
+# Current dependencies include git, ack, curl, Bundler and several Ruby gems.
+# The exit status is zero only if all dependencies are satisfied.
+#
+# With the `-s` flag, this outputs a script which can be eval'ed in the shell
+# that installs the missing dependencies by means of Homebrew and RubyGems.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

@@ -1,4 +1,11 @@
 #!/usr/bin/ruby
+# Usage: coral sort-versions
+# Summary: Sort version numbers
+# Help: Sorts version numbers passed on separate lines on STDIN. Results are
+# printed from largest number to smallest.
+#
+# Values that are not numbers are sorted by their alphabetical order.
+
 require 'strscan'
 
 # Author: Jordi Bunster

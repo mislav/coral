@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# Usage: coral commands [-v]
+# Summary: List available commands
+# Help: Lists coral commands available on the system.
+# This searches the whole PATH for executables starting with "coral-".
+#
+# It outputs only the command names. To get full paths, use `-v`.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

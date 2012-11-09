@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# Usage: coral clone (<search-term> | <owner>/<repo-name> | <github-url>)
+# Summary: Clone a GitHub repo to a location in $CORAL_ROOT
+# Help: Clones a GitHub repository to an automatically assigned location under
+# $CORAL_ROOT ("~/.coral/" by default).
+#
+# To see where the repository is located, use `coral path <repo-name>`.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
-## Searches source files inside current gem bundle.
+# Usage: coral bundle-ack <search-term> [<options...>]
+# Summary: Search inside the current bundle
+# Help: Searches through source code of each gem in the bundle. Search is
+# powered by ack and all arguments are forwarded to it. By default,
+# <search-term> is interpreted as a Perl-compatible regex.
 #
-# All arguments are forwarded to ack.
+# See `ack --help`
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+# Usage: coral checkout <repo-name> <version>
+# Summary: Create a new working copy for a repo
+# Help: Creates a new working copy for a repository in Coral. The new repo is
+# named '<repo>@<version>' and, altough it's a separate directory, it shares
+# the same git repo as the original working copy. This is achieved by magic.
+#
+# If <version> corresponds to a git tag, branch, or remote, the new working
+# copy will be switched to the corresponding git revision.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

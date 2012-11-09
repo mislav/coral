@@ -1,9 +1,19 @@
 #!/usr/bin/env ruby
-## Extract information from gemspecs in the current bundle.
+# Usage: coral bundle-spec-read <method> [--with-name] [--with-version]
+# Summary: Display a property value for each gem in the bundle
+# Help: Displays the value returned by <method> of each gemspec in the current
+# bundle.  <method> can be any instance method of Gem::Specification, or the
+# special value "lib_dirs" which lists all lib directories for each gem.
 #
-# Arguments:
-#   - method name to read from gem spec;
-#     supports special value "lib_dirs"
+# When `--with-name/--with-version` are present, prepend the name/version of
+# each gem in the output separated by tab characters.
+#
+# Some useful methods are:
+#   author(s)
+#   email
+#   summary, description
+#   homepage
+#   date
 
 require 'rubygems'
 require 'bundler'
