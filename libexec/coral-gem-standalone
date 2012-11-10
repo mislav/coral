@@ -13,7 +13,7 @@ set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
 gem_name="${1?}"
-[[ -n $prefix ]] || prefix=/usr/local
+prefix="${prefix:-/usr/local}"
 
 gemspec="$(coral-gem-spec-read loaded_from "$@")"
 gem_dir="$(coral-gem-dir "$@")"
@@ -31,7 +31,7 @@ cp "$gemspec" .
 
 echo "source :rubygems; gemspec" > Gemfile
 
-bundle install --path vendor --without development --standalone
+bundle install --path vendor --without development:test --standalone
 
 for binfile in "${gem_dir}/bin/"*; do
   if head -1 "$binfile" | grep ruby >/dev/null; then
