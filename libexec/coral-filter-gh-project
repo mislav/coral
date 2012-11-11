@@ -21,6 +21,6 @@ while gets
   when url1, url2
     puts "#$1/" + $2.sub(/\.git$/, '')
   when url3
-    puts "#$1/#$2}"
+    puts "#$1/#$2"
   end
 end
