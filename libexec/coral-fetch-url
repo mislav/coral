@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# Usage: coral fetch-url (<url> [<curl-args...>] | --clear-cache)
+# Summary: Fetch contents from a URL and cache the result
+# Help: Fetches contents from a URL and caches the result for 24 hours in
+# "$TMPDIR/coral" (default: "/tmp/coral").
+#
+# If `--clear-cache` is used instead of URL, this command will purge the cache,
+# causing all new fetches to actually hit the server.
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Usage: coral gh-project-search <term>
+# Summary: Get a clone URL by searching GitHub
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

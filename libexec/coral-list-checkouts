@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Usage: coral list-checkouts <repo>@<version>
+# Summary: List checkouts of a Coral repo
+
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 

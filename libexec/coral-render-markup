@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
+# Usage: coral render-markup <file>
+# Summary: Output styled HTML rendering of markup
+# Help: Renders markup in <file> and outputs the HTML together with CSS that
+# resembles READMEs on GitHub and support syntax highlighting.
+#
+# See `coral-github-markup`
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

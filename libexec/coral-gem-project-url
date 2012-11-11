@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-## Output the gem's GitHub project URL
+# Usage: coral gem-project-url <gem-name> [<url-type>]
+# Summary: Print the GitHub URL for a gem
+# Help: Print the URL of a gem's GitHub project.
 #
-# Arguments:
-#   - gem name (exact)
-#   - URL type; one of "git" or "ssh" (optional)
+# <url-type> can be one of "git" or "ssh".
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

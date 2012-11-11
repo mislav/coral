@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
-## Render markup from a file and output HTML.
-#
-# This script facilitates using the "github-markup" library and configures
-# Markdown processing to be the same as on GitHub.com.
+# Usage: coral github-markup <file>
+# Summary: Render HTML markup from a file
+# Help: Renders markup from Markdown, Textile, RDoc, and other types of files
+# the same way it is done on GitHub.com.
 
 file = ARGV[0]
 

@@ -1,5 +1,7 @@
 #!/bin/sh
-## Finds README files in the given directory.
+# Usage: coral find-readme <dir>
+# Summary: Find README files in directory
+# Help: Finds files named "README*" in the given directory.
 #
 # Does not recurse into nested directories.
 

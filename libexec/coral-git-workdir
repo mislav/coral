@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-## Create a new directory and make it a working copy of an existing git repo by
-# setting up necessary symlinks.
+# Usage: coral git-workdir [-f | --force] [--mv] <source-dir> <target-dir>
+# Summary: Create a new working copy for a local git repo
+# Help: Creates a new directory and makes it a working copy of an existing git
+# repo by setting up necessary symlinks.
 #
-# based on https://github.com/git/git/blob/afa0876/contrib/workdir/git-new-workdir
+# Based on https://github.com/git/git/blob/afa0876/contrib/workdir/git-new-workdir
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

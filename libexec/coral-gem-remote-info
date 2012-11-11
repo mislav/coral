@@ -1,4 +1,10 @@
 #!/bin/sh
+# Usage: coral gem-remote-info <gem-name>
+# Summary: Print metadata for a gem
+# Help: Outputs data from a remote gemspec.
+#
+# The format of the data is tab-separated key-value pairs.
+
 url="http://rubygems.org/api/v1/gems/${1}.json"
 
 coral-fetch-url "$url" | coral-parse-json

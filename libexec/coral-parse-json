@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-## Parse nested JSON structure into key-value pairs delimited by tab character.
+# Usage: coral parse-json
+# Summary: Output JSON structures in a flat line-based format
 
 require 'rubygems'
 require 'json'

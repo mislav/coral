@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-## Attempts to clone gem's source code from GitHub.
-#
-# Arguments:
-#   - gem name (exact)
+# Usage: coral gem-clone <gem-name> [<clone-args...>]
+# Summary: Clone a GitHub project for a gem
+# Help: Attempts to clone gem's source code from GitHub.
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

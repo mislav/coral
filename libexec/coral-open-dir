@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-## Open a directory in the text editor.
+# Usage: coral open-dir <dir> [<editor-args...>]
+# Summary: Open a project in a directory in the text editor
+# Help: Opens a project in the specified directory in $EDITOR.
 #
-# If the EDITOR is vim, it changes vim's current directory to the target
-# directory. In vim, it can also load additional files in buffers.
+# If the editor is Vim, these special features are supported:
+# - automatically cd into the directory inside Vim
+# - passing of additional files to open buffers for, such as "README"
+# - passing of extra arguments, such as `-t <tag>`
 
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x

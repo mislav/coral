@@ -1,5 +1,14 @@
 #!/usr/bin/env ruby
-## Extracts github project "owner/repo_name" pair from URLs in input.
+# Usage: coral filter-gh-project
+# Summary: Extract owner & repo information from GitHub URLs
+# Help: Scans STDIN for GitHub URLs, extracts the owner & repo information
+# from them and outputs that information in "owner/repo-name" format.
+#
+# Supports the following URL formats:
+#   - http://github.com/mislav/coral/...
+#   - http://mislav.github.com/coral/...
+#   - git://github.com/mislav/coral.git
+#   - git@github.com:mislav/coral.git
 
 name  = /\w[\w.-]*/
 owner = /[a-zA-Z0-9-]+/
