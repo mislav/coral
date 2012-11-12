@@ -43,6 +43,11 @@ case "$command" in
   fi
 
   shift 1
-  exec "$command_path" "$@"
+
+  if [ $# -eq 1 ] && [ "$1" = '-h' -o "$1" = '--help' ]; then
+    exec coral-help "$command"
+  else
+    exec "$command_path" "$@"
+  fi
   ;;
 esac
