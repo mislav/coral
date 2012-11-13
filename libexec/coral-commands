@@ -9,17 +9,28 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
-[ "$1" = '-v' ] && verbose=true
+unset verbose
+unset sh
+
+case "$1" in
+"-v" )
+  verbose=1
+  shift
+  ;;
+"--sh" )
+  sh=1
+  shift
+  ;;
+esac
 
 shopt -s nullglob
 
 { for path in ${PATH//:/$'\n'}; do
     for command in "${path}/coral-"*; do
       if [ -x "$command" ]; then
-        if [ -n $verbose ]; then
-          echo $command
-        else
-          echo ${command##*coral-}
+        [ -z $verbose ] && command=${command##*coral-}
+        if [ -z "$sh" -o ${command:0:3} = "sh-" ]; then
+          echo ${command#sh-}
         fi
       fi
     done

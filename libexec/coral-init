@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -e
+
+print=""
+if [ "$1" = "-" ]; then
+  print=1
+  shift
+fi
+
+shell="$(basename "${1:-$SHELL}")"
+
+if [ -z "$print" ]; then
+  case "$shell" in
+  bash )
+    profile='~/.bash_profile'
+    ;;
+  zsh )
+    profile='~/.zshenv'
+    ;;
+  * )
+    profile='your profile'
+    ;;
+  esac
+
+  { echo "# Load Coral automatically by adding"
+    echo "# the following to ${profile}:"
+    echo
+    echo "eval \"\$($(command -v coral) init -)\""
+    echo
+  } >&2
+
+  exit 1
+fi
+
+root="$(dirname "$0")"
+root="$(dirname "$root")"
+
+echo "export PATH=\"\${PATH}:${root}/bin\""
+
+case "$shell" in
+bash | zsh )
+  echo "source \"${root}/completions/coral.${shell}\""
+  ;;
+esac
+
+commands=(`coral commands --sh`)
+IFS="|"
+cat <<EOS
+coral() {
+  local command="\$1"
+  if [ "\$#" -gt 0 ]; then
+    shift
+  fi
+
+  case "\$command" in
+  ${commands[*]})
+    eval \`coral "sh-\$command" "\$@"\`;;
+  *)
+    command coral "\$command" "\$@";;
+  esac
+}
+EOS

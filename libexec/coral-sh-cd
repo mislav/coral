@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+dir="$(command coral path "$@")"
+[ -n "$dir" ] && echo cd "\"${dir}\""
