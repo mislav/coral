@@ -32,10 +32,12 @@ if [ -z "$print" ]; then
   exit 1
 fi
 
-root="$(dirname "$0")"
-root="$(dirname "$root")"
+root="$(dirname "$(dirname "$0")")"
 
-echo "export PATH=\"\${PATH}:${root}/bin\""
+echo "export PATH=\"${CORAL_ROOT}/bin:\${PATH}\""
+if [ "$root" != "$CORAL_ROOT" ]; then
+  echo "export PATH=\"\${PATH}:${root}/bin\""
+fi
 
 case "$shell" in
 bash | zsh )
