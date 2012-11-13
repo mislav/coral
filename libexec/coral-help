@@ -47,11 +47,7 @@ print_help() {
   fi
 }
 
-# Provide sub completions
-if [ "$1" = "--complete" ]; then
-  exec "coral-commands"
-  exit
-fi
+[ "$1" = "--complete" ] && exec coral-commands
 
 case "$1" in
 "") echo "Usage: coral <command> [<args>]

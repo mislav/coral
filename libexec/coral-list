@@ -7,14 +7,22 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+if [ "$1" = '--complete' ]; then
+  complete=1
+  shift
+fi
+
 prefix="$1"
 
 shopt -s failglob
 set -o pipefail
 
 { for repo_dir in "$CORAL_ROOT/repos/${prefix}"*; do
-  if [[ ! -L ${repo_dir}/.git/config ]]; then
-    name=$(basename "$repo_dir")
+  [[ ! -L ${repo_dir}/.git/config ]] || continue
+  name=${repo_dir##*/}
+  if [ -n "$complete" ]; then
+    echo ${name%@*}
+  else
     versions="$(coral-list-checkouts "$name")"
     echo ${name%@*} "(${versions//$'\n'/, })"
   fi

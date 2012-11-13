@@ -11,6 +11,8 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+[ "$1" = "--complete" ] && exec coral-list --complete
+
 origin="$(coral-path "$1")"
 workdir="${CORAL_ROOT}/repos/${1%@*}@${2}"
 
