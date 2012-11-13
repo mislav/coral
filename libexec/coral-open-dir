@@ -20,6 +20,9 @@ case ${EDITOR%% *} in
 vim | mvim | gvim )
   exec $EDITOR --cmd "cd ${dir// /\\ }" --cmd 'set tags^=.git/tags' "$@"
   ;;
+subl )
+  exec $EDITOR "$@"
+  ;;
 * )
   exec $EDITOR "$dir"
   ;;
