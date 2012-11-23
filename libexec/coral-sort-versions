@@ -20,7 +20,11 @@ sort = lambda do |list|
     parts     = ''
 
     if match = ss.scan_until(/\d+|[a-z]+/i)
-      parts << match.rjust(pad_to)
+      part = match.rjust(pad_to)
+      # hack to sort non-numerics before numerics, except
+      # "v1.0" which should come after "1.0"
+      part.tr!(' ', '0') if match =~ /\d/ or match == 'v'
+      parts << part
     end until ss.eos?
 
     parts
