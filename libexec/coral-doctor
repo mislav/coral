@@ -78,8 +78,8 @@ if gem_missing github-markup github/markup; then
   gems="${gems} github-markup"
 fi
 
-if gem_missing redcarpet; then
-  gems="${gems} redcarpet"
+if gem_missing html-pipeline html/pipeline; then
+  gems="${gems} html-pipeline"
 fi
 
 if gem_missing rdoc; then
@@ -88,10 +88,6 @@ fi
 
 if gem_missing redcloth; then
   gems="${gems} RedCloth"
-fi
-
-if gem_missing pygments.rb pygments; then
-  gems="${gems} pygments.rb"
 fi
 
 if [[ $retval -ne 0 ]]; then

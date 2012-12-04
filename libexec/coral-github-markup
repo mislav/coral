@@ -11,67 +11,34 @@ unless file and File.exist? file
   exit 2
 end
 
+old_level, $-w = $-w, nil
+
 begin
   require 'github/markup'
+  require 'html/pipeline'
 rescue LoadError
-  if defined?(::Gem)
-    abort $!.message
-  else
+  unless defined? Gem
     require 'rubygems'
     retry
+  else
+    abort $!.message
   end
+ensure
+  $-w = old_level
 end
 
-renderer = nil
-html_options = { }
-markdown_options = {
-  :autolink           => true,
-  :no_intra_emphasis  => true,
-  :fenced_code_blocks => true,
-}
+mdown_pipeline = HTML::Pipeline.new [
+  HTML::Pipeline::MarkdownFilter,
+  HTML::Pipeline::SanitizationFilter,
+  HTML::Pipeline::ImageMaxWidthFilter,
+  HTML::Pipeline::AutolinkFilter,
+  HTML::Pipeline::TableOfContentsFilter,
+  HTML::Pipeline::SyntaxHighlightFilter,
+], :gfm => false, :detect_syntax => false
 
-html_renderer = lambda {
-  renderer ||= begin
-    class TocHTML < Redcarpet::Render::HTML
-      def header text, level
-        href = text.gsub(/<.+?>/, '').strip.gsub(/\s+/, '-').downcase
-        anchor = %(<a name="#{href}" href="\##{href}"></a>)
-        %(<h#{level}>#{anchor}#{text}</h#{level}>\n)
-      end
-    end
-
-    begin
-      old_level, $-w = $-w, nil
-      require 'pygments'
-    rescue LoadError
-      warn "error loading pygments.rb; no syntax highlighting available"
-      TocHTML
-    else
-      require 'cgi'
-      Class.new(TocHTML) do
-        def block_code(code, language)
-          if language
-            Pygments.highlight code,
-              :lexer => language,
-              :options => {:encoding => 'utf-8'}
-          else
-            # can't call super: https://github.com/tanoku/redcarpet/issues/51
-            "<pre><code>#{CGI.escapeHTML code}</code></pre>"
-          end
-        end
-      end
-    ensure
-      $-w = old_level
-    end
-  end
-}
-
-GitHub::Markup.markup(:redcarpet, /md|mkdn?|mdown|markdown/) do |content|
-  markdown = Redcarpet::Markdown.new \
-    html_renderer.call.new(html_options),
-    markdown_options
-
-  markdown.render(content)
+GitHub::Markup.markup('github/markdown', /md|mkdn?|mdown|markdown/) do |content|
+  result = mdown_pipeline.call content
+  result[:output]
 end
 
 puts GitHub::Markup.render(file)
