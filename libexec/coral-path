@@ -10,6 +10,11 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+if [ "$1" = '--complete' ]; then
+  shift
+  exec coral-list --complete "$@"
+fi
+
 name="$1"
 repo_path="$CORAL_ROOT/repos/${name}"
 

@@ -8,6 +8,11 @@
 set -e
 [ -n "$CORAL_DEBUG" ] && set -x
 
+if [ "$1" = '--complete' ]; then
+  shift
+  exec coral-path --complete "$@"
+fi
+
 if [[ $1 = "--force" || $1 = "-f" ]]; then
   force=1
   shift 1
