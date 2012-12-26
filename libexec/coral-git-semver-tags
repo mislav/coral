@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Usage: coral git-semver-tags [<repo>[@<version>]]
+
+set -e
+[ -n "$CORAL_DEBUG" ] && set -x
+
+if [ "$1" = '--complete' ]; then
+  shift
+  exec coral-path --complete "$@"
+fi
+
+if [ -n "$1" ]; then
+  dir="$(coral-path "$1")"
+  export GIT_DIR="${dir}/.git"
+fi
+
+git tag -l |
+  grep -ve - |          # no pre-release tags
+  grep -E '^v?\d+\.' |  # only version tags
+  coral-sort-versions
