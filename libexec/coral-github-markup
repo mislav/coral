@@ -1,15 +1,16 @@
 #!/usr/bin/env ruby
-# Usage: coral github-markup <file>
-# Summary: Render HTML markup from a file
+# Usage: coral github-markup ( <file> | -f <filename> )
+# Summary: Render markup to HTML
 # Help: Renders markup from Markdown, Textile, RDoc, and other types of files
 # the same way it is done on GitHub.com.
+#
+# If `-f <filename>` is given, read data from STDIN instead of a file. The
+# filename is used to specify markup format; e.g. ".md".
 
 file = ARGV[0]
+file = ARGV.shift && ARGV.shift if "-f" == file
 
-unless file and File.exist? file
-  warn "usage: #$0 <file>"
-  exit 2
-end
+abort "usage: #$0 <file>" unless file
 
 old_level, $-w = $-w, nil
 
@@ -21,7 +22,8 @@ rescue LoadError
     require 'rubygems'
     retry
   else
-    abort $!.message
+    $stderr.puts "#$0: " + $!.message
+    exit 2
   end
 ensure
   $-w = old_level
@@ -41,4 +43,4 @@ GitHub::Markup.markup('github/markdown', /md|mkdn?|mdown|markdown/) do |content|
   result[:output]
 end
 
-puts GitHub::Markup.render(file)
+puts GitHub::Markup.render(file, ARGF.read)
