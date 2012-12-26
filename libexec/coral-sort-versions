@@ -8,7 +8,7 @@
 
 require 'strscan'
 
-# Author: Jordi Bunster
+# Adapted from Jordi Bunster
 # https://github.com/jordi/version_sorter/blob/master/version_sorter.rb
 sort = lambda do |list|
   ss     = StringScanner.new ''
@@ -19,13 +19,16 @@ sort = lambda do |list|
     ss.string = li
     parts     = ''
 
-    if match = ss.scan_until(/\d+|[a-z]+/i)
-      part = match.rjust(pad_to)
-      # hack to sort non-numerics before numerics, except
-      # "v1.0" which should come after "1.0"
-      part.tr!(' ', '0') if match =~ /\d/ or match == 'v'
+    if match = ss.scan_until(/[^.+-]+/)
+      alpha = match.index(/[^.+\d-]/)
+      part  = match.send(alpha ? :ljust : :rjust, pad_to)
+      part.sub!(/^(\s+)(\W)/, '\2\1') # put separator to front
+      part.sub!(/^\+/, '.') # make "+" sort with higher precedence than "-"
       parts << part
     end until ss.eos?
+
+    # make final versions sort with higher precendence than pre-releases
+    parts << "."
 
     parts
   end
