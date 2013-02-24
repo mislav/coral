@@ -30,7 +30,7 @@ for binfile in bin/*; do
     if head -1 "$binfile" | grep ruby >/dev/null; then
       { echo "#!/bin/sh"
         echo "dir=\"\$(cd \"\$(dirname \"\$0\")/${repo_rel}\" && pwd)\""
-        echo "RUBYLIB=\"\${dir}/lib:\$RUBYLIB\" \"\${dir}/${binfile}\" \"\$@\""
+        echo "RUBYLIB=\"\${dir}/lib:\$RUBYLIB\" exec -a ${binfile##*/} \"\${dir}/${binfile}\" \"\$@\""
       } > "$bindest"
       chmod +x "$bindest"
       echo "installed $bindest"
