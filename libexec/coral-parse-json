@@ -36,5 +36,6 @@ rescue
   $stderr.puts $!.message
   exit 1
 else
+  trap(:PIPE) { exit }
   dump data
 end
