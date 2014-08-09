@@ -12,7 +12,12 @@ _coral() {
   if [ "${#words}" -eq 2 ]; then
     completions="$(coral commands)"
   else
-    completions="$(coral completions "${word}")"
+    if [[ $word -eq "cd" ]]
+    then
+      completions="$(coral path --complete)"
+    else
+      completions="$(coral completions "${word}")"
+    fi
   fi
 
   reply=("${(ps:\n:)completions}")
